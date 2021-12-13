@@ -34,8 +34,6 @@ CREATE TABLE ask_users (
   recent_topics text
 );
 
-ALTER SEQUENCE ask_users_seq RESTART WITH 726;
-
 CREATE INDEX user_name ON ask_users (user_name);
 CREATE INDEX reputation ON ask_users (reputation);
 CREATE INDEX reputation_update_time ON ask_users (reputation_update_time);
@@ -43,6 +41,5 @@ CREATE INDEX group_id ON ask_users (group_id);
 CREATE INDEX agree_count ON ask_users (agree_count);
 CREATE INDEX thanks_count ON ask_users (thanks_count);
 CREATE INDEX forbidden ON ask_users (forbidden);
-CREATE INDEX last_active ON ask_users (last_active);
 CREATE INDEX integral ON ask_users (integral);
 CREATE INDEX answer_count ON ask_users (answer_count);

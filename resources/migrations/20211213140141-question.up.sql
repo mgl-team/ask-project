@@ -29,19 +29,17 @@ CREATE TABLE ask_question (
   updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX category_id ON ask_question (category_id);
-CREATE INDEX update_time ON ask_question (update_time);
-CREATE INDEX add_time ON ask_question (add_time);
-CREATE INDEX published_uid ON ask_question (uid);
-CREATE INDEX answer_count ON ask_question (answer_count);
-CREATE INDEX agree_count ON ask_question (agree_count);
-CREATE INDEX question_content ON ask_question (question_content);
-CREATE INDEX lock ON ask_question (lock);
-CREATE INDEX thanks_count ON ask_question (thanks_count);
-CREATE INDEX anonymous ON ask_question (anonymous);
-CREATE INDEX popular_value ON ask_question (popular_value);
-CREATE INDEX best_answer ON ask_question (best_answer);
-CREATE INDEX against_count ON ask_question (against_count);
-CREATE INDEX is_recommend ON ask_question (is_recommend);
-CREATE INDEX received_email_id ON ask_question (received_email_id);
-CREATE INDEX sort ON ask_question (sort);
+CREATE INDEX question_category_id ON ask_question (category_id);
+CREATE INDEX question_update_time ON ask_question (update_time);
+CREATE INDEX question_add_time ON ask_question (add_time);
+CREATE INDEX question_published_uid ON ask_question (uid);
+CREATE INDEX question_answer_count ON ask_question (answer_count);
+CREATE INDEX question_agree_count ON ask_question (agree_count);
+CREATE INDEX question_question_content ON ask_question (question_content);
+CREATE INDEX question_lock ON ask_question (lock);
+CREATE INDEX question_thanks_count ON ask_question (thanks_count);
+CREATE INDEX question_anonymous ON ask_question (anonymous);
+CREATE INDEX question_best_answer ON ask_question (best_answer);
+CREATE INDEX question_against_count ON ask_question (against_count);
+CREATE INDEX question_is_recommend ON ask_question (is_recommend);
+CREATE INDEX question_sort ON ask_question (sort);
