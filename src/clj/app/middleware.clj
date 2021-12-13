@@ -11,7 +11,8 @@
     [buddy.auth.backends.token :refer [jwe-backend]]
     [buddy.sign.jwt :refer [encrypt]]
     [buddy.core.nonce :refer [random-bytes]]
-    [buddy.sign.util :refer [to-timestamp]])
+    [buddy.sign.util :refer [to-timestamp]]
+    app.middleware.exception)
   (:import
    [java.util Calendar Date]))
 
