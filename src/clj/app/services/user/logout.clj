@@ -9,12 +9,14 @@
   (let [entity (sql/get-by-id :users (:id token))]
     ;; check exists
     (if (empty? entity)
-      (throw (ex-info "check" {:type ::exception/check :msg "user does not exists!"})))
+      (throw (ex-info "check" {:type ::exception/check
+                               :msg  "user does not exists!"})))
 
-    (sql/insert! :jwt_blacklist {:jti               (:jti token)
-                                 :exp               (:exp token)
-                                 :user_id           (:id entity)
-                                 :created_at        (hsql/raw "now()")
-                                 :updated_at        (hsql/raw "now()")})
+    (sql/insert! :jwt_blacklist {:jti        (:jti token)
+                                 :exp        (:exp token)
+                                 :user_id    (:id entity)
+                                 :created_at (hsql/raw "now()")
+                                 :updated_at (hsql/raw "now()")})
 
-    {:code 0 :msg "success"}))
+    {:code 0
+     :msg  "success"}))

@@ -4,26 +4,53 @@
     [next.jdbc.sql :as sql]
     [java-time :as time]
     [clojure.tools.logging :as log]
-    [app.config :refer [env]]
     [cuerdas.core :as str]
-    [app.middleware.exception :as exception]
     [buddy.hashers :as hashers]
     [buddy.core.hash :as hash]
-    [buddy.core.codecs :as codecs]))
-    ; [app.services.http-request :as http-service]))
+    [buddy.core.codecs :as codecs]
+    [app.config :refer [env]]
+    [app.db.core :refer [conn]]
+    [app.middleware.exception :as exception]
+    [app.services.sms :as sms-service]))
 
 (defn change-password [token params]
   ;; check confirmation
   (if-not (= (:password params) (:password-confirmation params))
-    (throw (ex-info "check" {:type ::exception/check :msg "confirmation not match!"})))
+    (throw (ex-info "check" {:type ::exception/check
+                             :msg  "confirmation not match!"})))
 
-  ;; check current password
   (let [entity (sql/find-by-id :users (:id token))]
+  
+    ;; check entity is not empty.
+    (if (empty? entity)
+      (throw (ex-info "check" {:type ::exception/check
+                               :msg  "user does not exist!"})))
+
+    ;; check current password
     (if-not (hashers/check (:current-password params) (:encrypted_password entity))
-      (throw (ex-info "check" {:type ::exception/check :msg "password not match!"}))))
+      (throw (ex-info "check" {:type ::exception/check
+                               :msg  "password not match!"}))))
 
   ;; update db
-  (sql/update! :users (:id token) {:password      (hashers/derive (:password params))
-                                   :updated_at    (hsql/raw "now()")})
+  (sql/update! :users (:id token) {:password   (hashers/derive (:password params))
+                                   :updated_at (hsql/raw "now()")})
 
-  {:code 0 :msg "success"})
+  {:code 0
+   :msg  "success"})
+
+(defn set-password [uinfo params]
+  (let [entity (sql/get-by-id conn :users (:id uinfo))]
+
+    (if (empty? entity)
+      (throw (ex-info "check" {:type ::exception/check
+                               :msg  "user does not exist!"})))
+
+    (if-not (= (:password params) (:password-confirmation params))
+      (throw (ex-info "check" {:type ::exception/check
+                               :msg  "confirmation not match!"})))
+    ;; update db
+    (sql/update! :users (:id uinfo) {:password   (hashers/derive (:password params))
+                                     :updated_at (hsql/raw "now()")})
+
+    {:code 0
+     :msg  "success"}))
