@@ -51,13 +51,13 @@
   (connect! pool-spec))
 ;; copied from conman
 
-(defstate ^:dynamic *db*
+(defstate ^:dynamic conn
   :start (if-let [jdbc-url (env :database-url)]
            (connect! {:jdbc-url jdbc-url})
            (do
              (log/warn "database connection URL was not found, please set :database-url in your config, e.g: dev-config.edn")
-             *db*))
-  :stop (disconnect! *db*))
+             conn))
+  :stop (disconnect! conn))
 
 (defn pgobj->clj [^org.postgresql.util.PGobject pgobj]
   (let [type (.getType pgobj)

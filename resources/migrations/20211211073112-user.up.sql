@@ -4,6 +4,8 @@ CREATE TABLE users (
     mobile text,
     email text,
     encrypted_password text,
+    user_token text,
+    user_token_send_at timestamp without time zone,
     reset_password_token text,
     reset_password_send_at timestamp without time zone,
     sign_in_count integer DEFAULT 0 NOT NULL,

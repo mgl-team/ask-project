@@ -34,8 +34,8 @@
 (defn restart-db
   "Restarts database."
   []
-  (mount/stop #'app.db.core/*db*)
-  (mount/start #'app.db.core/*db*))
+  (mount/stop #'app.db.core/conn)
+  (mount/start #'app.db.core/conn))
 
 (defn reset-db
   "Resets database."
