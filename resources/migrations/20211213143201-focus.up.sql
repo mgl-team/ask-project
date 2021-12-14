@@ -6,6 +6,8 @@ CREATE TABLE ask_focus (
   created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 ) ;
 
+--;;
 
 CREATE INDEX focus_type_item_id ON ask_focus (type, item_id);
+--;;
 CREATE INDEX focus_user_id ON ask_focus (type,item_id, user_id);

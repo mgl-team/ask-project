@@ -1,6 +1,6 @@
 CREATE TABLE users (
     id serial primary key,
-    username text NOT NULL,
+    username text,
     mobile text,
     email text,
     encrypted_password text,
