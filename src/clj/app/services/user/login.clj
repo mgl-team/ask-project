@@ -40,9 +40,8 @@
 
 
     ;; check token
-    (if (not= (:token params) (:user_token entity))
-      (throw (ex-info "check" {:type ::exception/check
-                               :msg  "token not matched"})))
+    ; (if (not= (:token params) (:user_token entity))
+    ;   (exception/ex-throw "token not match!"))
 
     ;; check token time limit
     (let [send-time (time/minus (time/local-date-time) (time/minutes 5))]

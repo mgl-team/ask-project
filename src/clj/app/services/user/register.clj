@@ -32,7 +32,7 @@
   ;; check code
   (sms/check-sms {:phone (:mobile user) :code (:code user)}))
 
-(defn register [user]
+(defn register [user headers addr]
   (check-before-register user)
   (let [{:keys [mobile]}                         user
         ; password                                 (hashers/derive (:password user))
