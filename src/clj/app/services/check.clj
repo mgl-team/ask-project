@@ -27,3 +27,12 @@
 (defn check-current-password [p1 entity info]
   (if-not (hashers/check p1 (:encrypted_password entity))
     (exception/ex-throw info)))
+
+;; ---
+(defn check-http-status [http-response]
+  (if (not= 200 (:status http-response))
+    (throw (ex-info "service" {:type ::exception/check :msg "service unavilable! "}))))
+
+(defn check-http-response [response]
+  (if (= 1 (:code response))
+    (throw (ex-info "service" {:type ::exception/check :msg (:msg response)}))))

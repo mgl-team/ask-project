@@ -4,6 +4,7 @@
     [clj-http.client :as client]
     [clojure.tools.logging :as log]
     [cheshire.core :as cheshire]
+    [app.services.check :as check-service]
     [app.middleware.exception :as exception]))
 
 (defn execute [method url params]
@@ -17,13 +18,12 @@
     (log/warn "http-request started ........")
 
     ;; check http response status
-    (if (not= 200 (:status http-response))
-      (throw (ex-info "service" {:type ::exception/check :msg "service unavilable! "})))
+    (check-service/check-http-status http-response)
 
     (let [json-message (cheshire/parse-string (:body http-response) true)]
+
       ;; check json response status
-      (if (= 1 (:code json-message))
-        (throw (ex-info "service" {:type ::exception/check :msg (:msg json-message)})))
+      (check-service/check-http-response json-message)
 
       (log/warn "http-request ended ........")
 
