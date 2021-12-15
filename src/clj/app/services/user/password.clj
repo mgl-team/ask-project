@@ -10,7 +10,7 @@
     [buddy.core.hash :as hash]
     [buddy.core.codecs :as codecs]
     [app.config :refer [env]]
-    [app.db.core :refer [conn]]
+    [app.db.core :as db :refer [conn]]
     [app.middleware.exception :as exception]
     [app.services.sms :as sms-service]
     [app.services.check :as check-service]))
@@ -22,8 +22,7 @@
     (:password-confirmation params)
     "confirmation not match!")
 
-  (let [entity (sql/find-by-id :users (:id token)
-                  {:builder-fn rs/as-unqualified-lower-maps})]
+  (let [entity (db/get-by-id conn :users (:id token))]
 
     ;; check entity is not empty.
     (check-service/check-must-exist entity "user does not exist!")
@@ -35,15 +34,14 @@
       "password not match!"))
 
   ;; update db
-  (sql/update! :users (:id token) {:password   (hashers/derive (:password params))
-                                   :updated_at (hsql/raw "now()")})
+  (db/update! :users {:id (:id uinfo)} {:password   (hashers/derive (:password params))
+                                        :updated_at (db/now)})
 
   {:code 0
    :msg  "success"})
 
 (defn set-password [uinfo params]
-  (let [entity (sql/get-by-id conn :users (:id uinfo)
-                  {:builder-fn rs/as-unqualified-lower-maps})]
+  (let [entity (db/get-by-id :users (:id uinfo))]
 
     (check-service/check-must-exist entity "user does not exist!")
 
@@ -53,8 +51,8 @@
       "confirmation not match!")
 
     ;; update db
-    (sql/update! :users (:id uinfo) {:password   (hashers/derive (:password params))
-                                     :updated_at (hsql/raw "now()")})
+    (db/update! :users {:id (:id uinfo)} {:password   (hashers/derive (:password params))
+                                          :updated_at (db/now)})
 
     {:code 0
      :msg  "success"}))

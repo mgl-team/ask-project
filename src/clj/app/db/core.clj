@@ -3,7 +3,9 @@
     [cheshire.core :refer [generate-string parse-string]]
     [next.jdbc.date-time]
     [next.jdbc.prepare]
-    [next.jdbc.result-set]
+    [next.jdbc.sql :as sql]
+    [next.jdbc.result-set :as rs]
+    [honeysql.core :as hsql]
     [clojure.set :refer [rename-keys]]
     [hikari-cp.core :refer [make-datasource]]
     [to-jdbc-uri.core :refer [to-jdbc-uri]]
@@ -113,3 +115,26 @@
                            (apply str (rest type-name)))]
         (.setObject stmt idx (.createArrayOf conn elem-type (to-array v)))
         (.setObject stmt idx (clj->jsonb-pgobj v))))))
+
+;;  --------------------------------------
+(defn update! [t w s]
+  (sql/update! conn t w s))
+
+(defn get-by-id [t id]
+  (sql/get-by-id conn t id
+    {:builder-fn rs/as-unqualified-lower-maps}))
+
+(defn find-by-keys [t w]
+  (sql/find-by-keys conn t w
+    {:builder-fn rs/as-unqualified-lower-maps}))
+
+(defn find-one-by-keys [t w]
+  (first
+    (sql/find-by-keys conn t w
+      {:builder-fn rs/as-unqualified-lower-maps})))
+
+(defn insert! [t info]
+  (sql/insert! conn t info))
+
+(defn now []
+  (hsql/raw "now()"))

@@ -13,8 +13,7 @@
    [app.middleware.exception :as exception]))
 
 (defn user-info [uinfo]
-  (let [entity (sql/find-by-id conn :users (:id uinfo)
-                 {:builder-fn rs/as-unqualified-lower-maps})]
+  (let [entity (db/find-by-id :users (:id uinfo))]
 
     ;; check entity is not empty.
     (check-service/check-must-exist entity "user does not exist!")
@@ -29,26 +28,25 @@
 
 
 (defn set-username [uinfo params]
-  (let [entity (sql/find-by-id conn :users (:id uinfo)
-                 {:builder-fn rs/as-unqualified-lower-maps})]
+  (let [entity (db/find-by-id :users (:id uinfo))]
 
     ;; check entity is not empty.
-    (check-service/check-must-exist entity "user does not exist!")
+    (check-service/check-must-exist entity "user does not exist!"))
 
     ;; set username
-    (let [result (sql/update! conn :users (:id uinfo) {:username   (:username params)
-                                                       :updated_at (hsql/raw "now()")})]
-      (log/info "set-username result = " result))
+  (let [result (db/update! :users {:id (:id uinfo)} {:username   (:username params)
+                                                     :updated_at (db/now)})]
+    (log/info "set-username result = " result))
 
-    {:code 0
-     :msg  "success"}))
+  {:code 0
+   :msg  "success"})
 
 (defn set-email [uinfo params]
   ;; check code TODO
 
   ;; set username
-  (let [result (sql/update! conn :users (:id uinfo) {:email      (:email params)
-                                                     :updated_at (hsql/raw "now()")})]
+  (let [result (db/update! :users {:id (:id uinfo)} {:email      (:email params)
+                                                     :updated_at (db/now)})]
     (log/info "set-email result = " result))
 
   {:code 0
@@ -59,8 +57,8 @@
   (sms-service/check-sms params)
 
   ;; set username
-  (let [result (sql/update! conn :users (:id uinfo) {:mobile     (:mobile params)
-                                                     :updated_at (hsql/raw "now()")})]
+  (let [result (db/update! :users {:id (:id uinfo)} {:mobile     (:mobile params)
+                                                     :updated_at (db/now)})]
     (log/info "set-mobile result = " result))
 
   {:code 0

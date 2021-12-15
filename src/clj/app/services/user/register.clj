@@ -8,7 +8,7 @@
    [clj-http.client :as client]
    [buddy.hashers :as hashers]
     ; [app.services.http-request :as http-service]
-   [app.db.core :refer [db]]
+   [app.db.core :as db :refer [conn]]
    [app.config :refer [env]]
    [app.services.sms :as sms]
    [app.middleware.exception :as exception]))
@@ -20,7 +20,7 @@
   ;                            :msg  "password not match!"})))
 
   ;; check mobile exist
-  (let [entity (sql/find-by-keys :users {:mobile (:mobile user)})]
+  (let [entity (db/find-by-keys :users {:mobile (:mobile user)})]
     (check-service/check-must-not-exist entity "mobile already exists"))
 
   ;; check user exists
@@ -38,7 +38,7 @@
         ; password                                 (hashers/derive (:password user))
         model                                    (-> user)
         ; (select-keys [:username :email :mobile]) (assoc :encrypted_password password)
-        result                                   (sql/insert! :users model)]
+        result                                   (db/insert! :users model)]
 
     {:code 0
      :msg  "success"
