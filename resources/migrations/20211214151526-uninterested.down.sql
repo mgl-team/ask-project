@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS ask_uninterested;
+DROP TABLE IF EXISTS uninterested;

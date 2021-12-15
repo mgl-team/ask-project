@@ -1,4 +1,4 @@
-CREATE TABLE ask_answer (
+CREATE TABLE answer (
   id serial primary key,
   question_id integer,
   content text ,
@@ -18,20 +18,20 @@ CREATE TABLE ask_answer (
 );
 
 --;;
-CREATE INDEX answer_question_id ON ask_answer (question_id);
+CREATE INDEX answer_question_id ON answer (question_id);
 --;;
-CREATE INDEX answer_agree_count ON ask_answer (agree_count);
+CREATE INDEX answer_agree_count ON answer (agree_count);
 --;;
-CREATE INDEX answer_against_count ON ask_answer (against_count);
+CREATE INDEX answer_against_count ON answer (against_count);
 --;;
-CREATE INDEX answer_add_time ON ask_answer (created_at);
+CREATE INDEX answer_add_time ON answer (created_at);
 --;;
-CREATE INDEX answer_uid ON ask_answer (user_id);
+CREATE INDEX answer_uid ON answer (user_id);
 --;;
-CREATE INDEX answer_uninterested_count ON ask_answer (uninterested_count);
+CREATE INDEX answer_uninterested_count ON answer (uninterested_count);
 --;;
-CREATE INDEX answer_force_fold ON ask_answer (force_fold);
+CREATE INDEX answer_force_fold ON answer (force_fold);
 --;;
-CREATE INDEX answer_anonymous ON ask_answer (anonymous);
+CREATE INDEX answer_anonymous ON answer (anonymous);
 --;;
-CREATE INDEX answer_publich_source ON ask_answer (publish_source);
+CREATE INDEX answer_publich_source ON answer (publish_source);

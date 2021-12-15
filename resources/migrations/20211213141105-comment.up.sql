@@ -1,4 +1,4 @@
-CREATE TABLE ask_comments (
+CREATE TABLE comments (
   id serial primary key,
   item_id int DEFAULT '0',
   user_id int DEFAULT '0',
@@ -10,7 +10,7 @@ CREATE TABLE ask_comments (
 
 --;;
 
-CREATE INDEX comments_type_item_id ON ask_comments (type, item_id);
+CREATE INDEX comments_type_item_id ON comments (type, item_id);
 --;;
-CREATE INDEX comments_created_at ON ask_comments (created_at);
+CREATE INDEX comments_created_at ON comments (created_at);
 --;;

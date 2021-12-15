@@ -1,4 +1,4 @@
-CREATE TABLE ask_vote (
+CREATE TABLE vote (
   id serial primary key,
   item_id int DEFAULT '0',
   type varchar(16) NOT NULL,
@@ -9,6 +9,6 @@ CREATE TABLE ask_vote (
 ) ;
 
 --;;
-CREATE INDEX vote_type_item_id ON ask_vote (type, item_id);
+CREATE INDEX vote_type_item_id ON vote (type, item_id);
 --;;
-CREATE INDEX vote_value ON ask_vote (vote_value);
+CREATE INDEX vote_value ON vote (vote_value);

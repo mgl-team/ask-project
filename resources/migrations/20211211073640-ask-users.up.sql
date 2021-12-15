@@ -1,4 +1,4 @@
-CREATE TABLE ask_users (
+CREATE TABLE user_ex (
   id serial primary key,
   user_name varchar(255) DEFAULT NULL ,
   salt varchar(16) DEFAULT NULL ,
@@ -35,20 +35,20 @@ CREATE TABLE ask_users (
 );
 
 --;;
-CREATE INDEX user_user_user_name ON ask_users (user_name);
+CREATE INDEX user_user_user_name ON user_ex (user_name);
 --;;
-CREATE INDEX user_user_reputation ON ask_users (reputation);
+CREATE INDEX user_user_reputation ON user_ex (reputation);
 --;;
-CREATE INDEX user_user_reputation_update_time ON ask_users (reputation_update_time);
+CREATE INDEX user_user_reputation_update_time ON user_ex (reputation_update_time);
 --;;
-CREATE INDEX user_user_group_id ON ask_users (group_id);
+CREATE INDEX user_user_group_id ON user_ex (group_id);
 --;;
-CREATE INDEX user_user_agree_count ON ask_users (agree_count);
+CREATE INDEX user_user_agree_count ON user_ex (agree_count);
 --;;
-CREATE INDEX user_user_thanks_count ON ask_users (thanks_count);
+CREATE INDEX user_user_thanks_count ON user_ex (thanks_count);
 --;;
-CREATE INDEX user_user_forbidden ON ask_users (forbidden);
+CREATE INDEX user_user_forbidden ON user_ex (forbidden);
 --;;
-CREATE INDEX user_user_integral ON ask_users (integral);
+CREATE INDEX user_user_integral ON user_ex (integral);
 --;;
-CREATE INDEX user_user_answer_count ON ask_users (answer_count);
+CREATE INDEX user_user_answer_count ON user_ex (answer_count);

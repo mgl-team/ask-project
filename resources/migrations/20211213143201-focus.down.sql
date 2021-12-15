@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS ask_focus;
+DROP TABLE IF EXISTS focus;

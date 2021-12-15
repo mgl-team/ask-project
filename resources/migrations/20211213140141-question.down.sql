@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS ask_question;
+DROP TABLE IF EXISTS question;

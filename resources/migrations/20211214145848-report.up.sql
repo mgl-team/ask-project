@@ -1,4 +1,4 @@
-CREATE TABLE ask_report (
+CREATE TABLE report (
   id serial primary key,
   user_id int ,
   type varchar(16) NOT NULL,
@@ -10,6 +10,6 @@ CREATE TABLE ask_report (
   updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 --;;
-CREATE INDEX report_created_at ON ask_report (created_at);
+CREATE INDEX report_created_at ON report (created_at);
 --;;
-CREATE INDEX status ON ask_report (status);
+CREATE INDEX status ON report (status);

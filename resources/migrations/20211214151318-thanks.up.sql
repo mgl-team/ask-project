@@ -1,4 +1,4 @@
-CREATE TABLE ask_thanks (
+CREATE TABLE thanks (
   id serial primary key,
   item_id int DEFAULT '0',
   type varchar(16) NOT NULL,
@@ -7,4 +7,4 @@ CREATE TABLE ask_thanks (
 ) ;
 
 --;;
-CREATE INDEX thanks_type_item_id ON ask_thanks (type, item_id);
+CREATE INDEX thanks_type_item_id ON thanks (type, item_id);

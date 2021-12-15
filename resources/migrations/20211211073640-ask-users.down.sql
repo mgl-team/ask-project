@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS ask_users;
+DROP TABLE IF EXISTS user_ex;

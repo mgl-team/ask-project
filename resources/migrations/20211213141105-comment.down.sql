@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS ask_comments;
+DROP TABLE IF EXISTS comments;

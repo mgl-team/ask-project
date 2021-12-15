@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS ask_question_invite;
+DROP TABLE IF EXISTS question_invite;

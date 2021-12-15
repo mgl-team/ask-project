@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS ask_thanks;
+DROP TABLE IF EXISTS thanks;

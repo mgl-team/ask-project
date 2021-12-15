@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS ask_report;
+DROP TABLE IF EXISTS report;

@@ -1,4 +1,4 @@
-CREATE TABLE ask_question_invite (
+CREATE TABLE question_invite (
   id serial primary key,
   question_id int,
   sender_id int,
@@ -8,8 +8,8 @@ CREATE TABLE ask_question_invite (
 
 
 --;;
-CREATE INDEX question_invite_question_id ON ask_question_invite (question_id);
+CREATE INDEX question_invite_question_id ON question_invite (question_id);
 --;;
-CREATE INDEX question_invite_sender_id ON ask_question_invite (sender_id);
+CREATE INDEX question_invite_sender_id ON question_invite (sender_id);
 --;;
-CREATE INDEX question_invite_cecipients_id ON ask_question_invite (cecipients_id);
+CREATE INDEX question_invite_cecipients_id ON question_invite (cecipients_id);

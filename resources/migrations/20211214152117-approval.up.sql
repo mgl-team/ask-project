@@ -1,4 +1,4 @@
-CREATE TABLE ask_approval (
+CREATE TABLE approval (
   id serial primary key,
   item_id int DEFAULT '0',
   type varchar(16) NOT NULL,
@@ -8,8 +8,8 @@ CREATE TABLE ask_approval (
 );
 
 --;;
-CREATE INDEX approval_type ON ask_approval (type);
+CREATE INDEX approval_type ON approval (type);
 --;;
-CREATE INDEX approval_user_id ON ask_approval (user_id);
+CREATE INDEX approval_user_id ON approval (user_id);
 --;;
-CREATE INDEX approval_created_at ON ask_approval (created_at);
+CREATE INDEX approval_created_at ON approval (created_at);
