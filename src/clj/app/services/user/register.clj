@@ -20,9 +20,8 @@
   ;                            :msg  "password not match!"})))
 
   ;; check mobile exist
-  (if-not (empty? (sql/find-by-keys :users {:mobile (:mobile user)}))
-    (throw (ex-info "check" {:type ::exception/check
-                             :msg  "mobile already exists!"})))
+  (let [entity (sql/find-by-keys :users {:mobile (:mobile user)})]
+    (check-service/check-must-not-exist entity "mobile already exists"))
 
   ;; check user exists
   ; (if (and (:username user)

@@ -10,9 +10,7 @@
   (let [entity (sql/get-by-id :users (:id token)
                   {:builder-fn rs/as-unqualified-lower-maps})]
     ;; check exists
-    (if (empty? entity)
-      (throw (ex-info "check" {:type ::exception/check
-                               :msg  "user does not exists!"})))
+    (check-service/check-must-exist entity "user does not exist!")
 
     (sql/insert! :jwt_blacklist {:jti        (:jti token)
                                  :exp        (:exp token)

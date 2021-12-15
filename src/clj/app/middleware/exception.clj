@@ -50,3 +50,7 @@
                         (log/error e (.getMessage e))
                         (log/error (-> e ex-data))
                         (handler e request))})))
+
+(defn ex-throw [info]
+  (throw (ex-info "check" {:type ::exception/check
+                           :msg  info})))

@@ -5,23 +5,25 @@
    [next.jdbc.result-set :as rs]
    [java-time :as time]
    [clojure.tools.logging :as log]
-   [app.db.core :refer [conn]]
-   [app.config :refer [env]]
    [cuerdas.core :as str]
-   [app.middleware.exception :as exception]
-   [app.middleware :refer [secret]]
+   [chime.core :as chime]
    [buddy.hashers :as hashers]
    [buddy.sign.jwt :as jwt]
-   [chime.core :as chime]
+   [app.db.core :refer [conn]]
+   [app.config :refer [env]]
    [app.services.sms :as sms-service]
-   [app.services.token :as token]))
+   [app.services.check :as check-service]
+   [app.services.token :as token]
+   [app.middleware.exception :as exception]
+   [app.middleware :refer [secret]]))
 
 (defn enter-login [params]
   "enter login page check params"
   (let [entity (first (sql/find-by-keys conn :users params
                         {:builder-fn rs/as-unqualified-lower-maps}))]
-    (if (empty? entity)
-      (throw (ex-info "check" {:type ::exception/check :msg "user not exists!"})))
+
+    ;; check user exist
+    (check-service/check-must-exist entity "user does not exist!")
 
     (let [token (token/generate-token)]
       (sql/update! :users {:id (:id entity)} {:user_token         token
@@ -34,26 +36,20 @@
                         {:builder-fn rs/as-unqualified-lower-maps}))]
 
     ;; check if user not exits
-    (if (empty? entity)
-      (throw (ex-info "check" {:type ::exception/check
-                               :msg  "user not exists!"})))
+    (check-service/check-must-exist entity "user does not exist!")
 
     ;; check locked
-    (if (:locked_at entity)
-      (throw (ex-info "check" {:type ::exception/check
-                               :msg  "locked!"})))
+    (check-service/check-locked entity "locked!")
+
 
     ;; check token
     (if (not= (:token params) (:user_token entity))
       (throw (ex-info "check" {:type ::exception/check
-                               :msg  "locked!"})))
+                               :msg  "token not matched"})))
 
     ;; check token time limit
     (let [send-time (time/minus (time/local-date-time) (time/minutes 5))]
-      (if (time/before? (:user_token_send_at entity) send-time)
-        (throw (ex-info "check" {:type ::exception/check
-                                 :msg  "time limit!"}))))
-
+      (check-service/check-time-after (:user_token-send_at entity) send-time "time limit"))
 
     ;; check password
     (if (:password params)
@@ -71,8 +67,7 @@
                             (let [result (sql/update! conn :users {:id (:id entity)} (merge attempt-params locked-params))]
                               (log/info "login attempts update result " result))))
 
-          (throw (ex-info "check" {:type ::exception/check
-                                   :msg  "password not match!"})))))
+          (exception/ex-throw "password not match!"))))
 
 
     ;; check code
@@ -81,8 +76,8 @@
 
     ;; check no password and no code
     (if (and (empty? (:code params)) (empty? (:password params)))
-      (throw (ex-info "check" {:type ::exception/check
-                               :msg  "password and code!"})))
+      (exception/ex-throw "password and code!"))
+
     ;; check ended ..................
 
     ;; update statistics record
