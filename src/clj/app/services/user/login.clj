@@ -18,7 +18,8 @@
 
 (defn enter-login [params]
   "enter login page check params"
-  (let [entity (first (sql/find-by-keys conn :users params))]
+  (let [entity (first (sql/find-by-keys conn :users params
+                        {:builder-fn rs/as-unqualified-lower-maps}))]
     (if (empty? entity)
       (throw (ex-info "check" {:type ::exception/check :msg "user not exists!"})))
 
@@ -29,7 +30,8 @@
 
 (defn do-login [params headers addr]
   ""
-  (let [entity (first (sql/find-by-keys conn :users (dissoc params :password :token :code)))]
+  (let [entity (first (sql/find-by-keys conn :users (dissoc params :password :token :code)
+                        {:builder-fn rs/as-unqualified-lower-maps}))]
 
     ;; check if user not exits
     (if (empty? entity)
@@ -74,8 +76,13 @@
 
 
     ;; check code
-    (sms-service/check-sms {:phone (:mobile user) :code (:code user)})
+    (if (:code params)
+      (sms-service/check-sms {:phone (:mobile params) :code (:code params)}))
 
+    ;; check no password and no code
+    (if (and (empty? (:code params)) (empty? (:password params)))
+      (throw (ex-info "check" {:type ::exception/check
+                               :msg  "password and code!"})))
     ;; check ended ..................
 
     ;; update statistics record
@@ -104,6 +111,7 @@
       {:code  0
        :token token
        :msg   "success"})))
+
 
 (defn login [user headers addr]
   (do-login user headers addr))

@@ -2,6 +2,7 @@
   (:require
     [honeysql.core :as hsql]
     [next.jdbc.sql :as sql]
+    [next.jdbc.result-set :as rs]
     [java-time :as time]
     [clojure.tools.logging :as log]
     [cuerdas.core :as str]
@@ -19,8 +20,9 @@
     (throw (ex-info "check" {:type ::exception/check
                              :msg  "confirmation not match!"})))
 
-  (let [entity (sql/find-by-id :users (:id token))]
-  
+  (let [entity (sql/find-by-id :users (:id token)
+                  {:builder-fn rs/as-unqualified-lower-maps})]
+
     ;; check entity is not empty.
     (if (empty? entity)
       (throw (ex-info "check" {:type ::exception/check
@@ -39,7 +41,8 @@
    :msg  "success"})
 
 (defn set-password [uinfo params]
-  (let [entity (sql/get-by-id conn :users (:id uinfo))]
+  (let [entity (sql/get-by-id conn :users (:id uinfo)
+                  {:builder-fn rs/as-unqualified-lower-maps})]
 
     (if (empty? entity)
       (throw (ex-info "check" {:type ::exception/check

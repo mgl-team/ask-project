@@ -2,6 +2,7 @@
   (:require
    [honeysql.core :as hsql]
    [next.jdbc.sql :as sql]
+   [next.jdbc.result-set :as rs]
    [java-time :as time]
    [clojure.tools.logging :as log]
    [cuerdas.core :as str]
@@ -19,7 +20,8 @@
 ;                                :msg  "user does not exist!"})))))
 
 (defn set-username [uinfo params]
-  (let [entity (sql/find-by-id conn :users (:id uinfo))]
+  (let [entity (sql/find-by-id conn :users (:id uinfo)
+                 {:builder-fn rs/as-unqualified-lower-maps})]
 
     ;; check entity is not empty.
     (if (empty? entity)
