@@ -34,7 +34,7 @@
       "password not match!"))
 
   ;; update db
-  (db/update! :users {:id (:id uinfo)} {:password   (hashers/derive (:password params))
+  (db/update! :users {:id (:id token)} {:password   (hashers/derive (:password params))
                                         :updated_at (db/now)})
 
   {:code 0

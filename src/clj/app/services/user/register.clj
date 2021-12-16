@@ -11,6 +11,7 @@
    [app.db.core :as db :refer [conn]]
    [app.config :refer [env]]
    [app.services.sms :as sms]
+   [app.services.check :as check-service]
    [app.middleware.exception :as exception]))
 
 (defn- check-before-register [user]

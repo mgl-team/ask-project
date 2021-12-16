@@ -6,14 +6,14 @@
    [java-time :as time]
    [clojure.tools.logging :as log]
    [cuerdas.core :as str]
-   [app.db.core :refer [conn]]
+   [app.db.core :as db :refer [conn]]
    [app.config :refer [env]]
    [app.services.sms :as sms-service]
    [app.services.check :as check-service]
    [app.middleware.exception :as exception]))
 
 (defn user-info [uinfo]
-  (let [entity (db/find-by-id :users (:id uinfo))]
+  (let [entity (db/get-by-id :users (:id uinfo))]
 
     ;; check entity is not empty.
     (check-service/check-must-exist entity "user does not exist!")
@@ -28,7 +28,7 @@
 
 
 (defn set-username [uinfo params]
-  (let [entity (db/find-by-id :users (:id uinfo))]
+  (let [entity (db/get-by-id :users (:id uinfo))]
 
     ;; check entity is not empty.
     (check-service/check-must-exist entity "user does not exist!"))
