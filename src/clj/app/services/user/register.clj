@@ -36,9 +36,9 @@
 (defn register [user headers addr]
   (check-before-register user)
   (let [{:keys [mobile]}                         user
-        ; password                                 (hashers/derive (:password user))
-        model                                    (-> user)
-        ; (select-keys [:username :email :mobile]) (assoc :encrypted_password password)
+        password                                 (hashers/derive (:password user))
+        model                                    (-> user
+                                                    (assoc :encrypted_password password))
         result                                   (db/insert! :users model)]
 
     {:code 0
