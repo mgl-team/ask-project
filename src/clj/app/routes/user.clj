@@ -57,8 +57,5 @@
      :get {:summary "info ."
            :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
                                                           , (ds/opt :token) any?}}}
-           ; :handler (fn [{{:keys [body]} :parameters headers :headers uinfo :identity}])
-           :handler (fn [req]
-                      (log/warn "11 info " (dissoc req :reitit.core/match))
-                      {:status 200 :body {:code 0 :msg ""}})}}]])
-                       ; (info-service/user-info uinfo)})}}]])
+           :handler (fn [{{:keys [body]} :parameters headers :headers uinfo :identity}]
+                      {:status 200 :body (info-service/user-info uinfo)})}}]])
