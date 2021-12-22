@@ -3,6 +3,7 @@
     [cheshire.core :refer [generate-string parse-string]]
     [next.jdbc.date-time]
     [next.jdbc.prepare]
+    [next.jdbc :as jdbc]
     [next.jdbc.sql :as sql]
     [next.jdbc.result-set :as rs]
     [honeysql.core :as hsql]
@@ -118,7 +119,8 @@
 
 ;;  --------------------------------------
 (defn update! [t w s]
-  (sql/update! conn t w s))
+  (sql/update! conn t w s
+    {:builder-fn rs/as-unqualified-lower-maps}))
 
 (defn get-by-id [t id]
   (sql/get-by-id conn t id
@@ -134,7 +136,8 @@
       {:builder-fn rs/as-unqualified-lower-maps})))
 
 (defn insert! [t info]
-  (sql/insert! conn t info))
+  (sql/insert! conn t info
+    {:builder-fn rs/as-unqualified-lower-maps}))
 
-(defn now []
-  (hsql/raw "now()"))
+(defn execute! [sqlmap]
+  (jdbc/execute! conn sqlmap))

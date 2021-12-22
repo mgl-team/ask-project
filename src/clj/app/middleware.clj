@@ -8,10 +8,11 @@
     [buddy.auth.accessrules :refer [restrict]]
     [buddy.auth :refer [authenticated?]]
     [buddy.auth.backends.session :refer [session-backend]]
-    [buddy.auth.backends.token :refer [jwe-backend]]
-    [buddy.sign.jwt :refer [encrypt]]
+    [buddy.auth.backends.token :refer [jwe-backend jws-backend]]
+    [buddy.sign.jwt :refer [encrypt decrypt]]
     [buddy.core.nonce :refer [random-bytes]]
     [buddy.sign.util :refer [to-timestamp]]
+    [ring.logger :as logger]
     app.middleware.exception)
   (:import
    [java.util Calendar Date]))
@@ -27,11 +28,14 @@
                      :on-error on-error}))
 
 (def secret (random-bytes 32))
+;; 31af673fa9cc365da7ec44f1575f7d0916ef71b08232716c9488a3da2ec889b6
+; buddy.core.codecs/bytes->hex
 
 (def token-backend
   (jwe-backend {:secret secret
                 :options {:alg :a256kw
                           :enc :a128gcm}}))
+
 
 (defn token [username]
   (let [claims {:user (keyword username)
@@ -42,6 +46,9 @@
                            (.add Calendar/HOUR_OF_DAY 1))))}]
     (encrypt claims secret {:alg :a256kw :enc :a128gcm})))
 
+(defn dec-data [data]
+  (decrypt data secret {:alg :a256kw :enc :a128gcm}))
+
 (defn wrap-auth [handler]
   (let [backend token-backend]
     (-> handler
@@ -50,7 +57,9 @@
 
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
+      logger/wrap-log-response
       wrap-auth
       (wrap-defaults
         (-> site-defaults
-            (assoc-in [:security :anti-forgery] false)))))
+            (assoc-in [:security :anti-forgery] false)))
+      logger/wrap-log-request-start))

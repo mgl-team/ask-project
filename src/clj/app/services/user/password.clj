@@ -1,6 +1,6 @@
 (ns app.services.user.password
   (:require
-    [honeysql.core :as hsql]
+    [honey.sql :as hsql]
     [next.jdbc.sql :as sql]
     [next.jdbc.result-set :as rs]
     [java-time :as time]
@@ -34,8 +34,11 @@
       "password not match!"))
 
   ;; update db
-  (db/update! :users {:id (:id token)} {:password   (hashers/derive (:password params))
-                                        :updated_at (db/now)})
+  (let [sqlmap {:update :users, :set {:password   (hashers/derive (:password params))
+                                      :updated_at [:raw "now()"]}
+                :where [:= :id (:id token)]}
+        result (db/execute! (hsql/format sqlmap))]
+    (log/warn "result = " result))
 
   {:code 0
    :msg  "success"})
@@ -48,11 +51,14 @@
     (check-service/check-password-confirmation
       (:password params)
       (:password-confirmation params)
-      "confirmation not match!")
+      "confirmation not match!"))
 
-    ;; update db
-    (db/update! :users {:id (:id uinfo)} {:password   (hashers/derive (:password params))
-                                          :updated_at (db/now)})
+  ;; update db
+  (let [sqlmap {:update :users, :set {:password   (hashers/derive (:password params))
+                                      :updated_at [:raw "now()"]}
+                :where [:= :id (:id uinfo)]}
+        result (db/execute! (hsql/format sqlmap))]
+    (log/warn "result = " result)
 
     {:code 0
      :msg  "success"}))

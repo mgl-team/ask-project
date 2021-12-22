@@ -1,6 +1,6 @@
 (ns app.services.user.login
   (:require
-   [honeysql.core :as hsql]
+   [honey.sql :as hsql]
    [next.jdbc.sql :as sql]
    [next.jdbc.result-set :as rs]
    [java-time :as time]
@@ -23,9 +23,13 @@
     ;; check user exist
     (check-service/check-must-exist entity "user does not exist!")
 
-    (let [token (token/generate-token)]
-      (db/update! :users {:id (:id entity)} {:user_token         token
-                                             :user_token_send_at (db/now)})
+    (let [token (token/generate-token)
+          sqlmap {:update :users, :set {:user_token         token
+                                        :user_token_send_at [:raw "now()"]}
+                  :where [:= :id (:id token)]}
+          result (db/execute! (hsql/format sqlmap))]
+      (log/warn "result = " result)
+
       {:code 0 :msg "success" :token token})))
 
 (defn do-login [params headers addr]
@@ -44,23 +48,25 @@
     ;   (exception/ex-throw "token not match!"))
 
     ;; check token time limit
-    (let [send-time (time/minus (time/local-date-time) (time/minutes 5))]
-      (check-service/check-time-after (:user_token-send_at entity) send-time "time limit"))
+    ; (let [send-time (time/minus (time/local-date-time) (time/minutes 5))]
+    ;   (check-service/check-time-after (:user_token-send_at entity) send-time "time limit"))
 
     ;; check password
     (if (:password params)
 
       (if-not (hashers/check (:password params) (:encrypted_password entity))
 
-        (let [attempt-params {:updated_at      (db/now)
-                              :failed_attempts (hsql/call :+ :failed_attempts 1)}
+        (let [attempt-params {:updated_at      [:raw "now()"]
+                              :failed_attempts [:+ :failed_attempts 1]}
               attempts       (:failed_attempts entity)
               locked-params  (if attempts (> attempts 3)
-                                 {:locked_at (db/now)})]
+                                 {:locked_at [:raw "now()"]})
+              sqlmap {:update :users, :set (merge attempt-params locked-params)
+                      :where [:= :id (:id entity)]}]
 
           (chime/chime-at [(.plusSeconds (time/instant) 1)]
                           (fn [time]
-                            (let [result (db/update! :users {:id (:id entity)} (merge attempt-params locked-params))]
+                            (let [result (db/execute! (hsql/format sqlmap))]
                               (log/info "login attempts update result " result))))
 
           (exception/ex-throw "password not match!"))))
@@ -77,19 +83,24 @@
     ;; check ended ..................
 
     ;; update statistics record
-    (let [up-params {:sign_in_count      (hsql/call :+ :sign_in_count 1)
-                     :current_sign_in_at (db/now)
-                     :last_sign_in_ip    (hsql/call := :current_sign_in_ip)
-                     :current_sign_in_ip addr
-                     :updated_at         (db/now)
-                     :failed_attempts    0}]
-      (chime/chime-at [(.plusSeconds (time/instant) 1)]
-                      (fn [time]
-                        (let [result (db/update! :users {:id (:id entity)} up-params)]
-                          (log/info "update statistics record " result)))))
+    (log/warn "update statistics start")
+    (let [sqlmap {:update :users, :set {:sign_in_count      [:+ :sign_in_count 1]
+                                        :current_sign_in_at [:raw "now()"]
+                                        :last_sign_in_ip    [:raw "current_sign_in_ip"]
+                                        :current_sign_in_ip addr
+                                        :updated_at         [:raw "now()"]
+                                        :failed_attempts    0}
+                  :where [:= :id (:id entity)]}]
+      ; (log/warn "sql = " (hsql/format sqlmap))
+      (let [result (db/execute! (hsql/format sqlmap))]
+        (log/info "update statistics record " result)))
+      ; (chime/chime-at [(.plusSeconds (time/instant) 1)]
+      ;                 (fn [time]
+      ;                   (let [result (db/execute! (hsql/format sqlmap))]
+      ;                     (log/warn "update statistics record " result)))))
 
     ;; generate token
-    (let [token  (token/jwt-token entity)]
+    (let [token  (token/jwt-token (:id entity))]
       {:code  0
        :token token
        :msg   "success"})))
