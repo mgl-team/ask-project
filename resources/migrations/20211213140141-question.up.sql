@@ -21,7 +21,7 @@ CREATE TABLE question (
   anonymous smallint NOT NULL DEFAULT '0',
   thanks_count int NOT NULL DEFAULT '0',
   is_recommend smallint NOT NULL DEFAULT '0',
-  sort smallint check (sort > 0) NOT NULL DEFAULT '0',
+  sort smallint check (sort > -1) NOT NULL DEFAULT '0',
   accept_answer_id int DEFAULT NULL ,
   pay_money decimal(10,0) DEFAULT NULL ,
   pay_type smallint DEFAULT NULL,
