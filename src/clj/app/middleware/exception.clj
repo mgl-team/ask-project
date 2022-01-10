@@ -16,12 +16,12 @@
           :uri (:uri request)}})
 
 (defn- custom-handler [exception request]
-  {:status 200
-   :body {:code 1 :msg (-> exception ex-data :msg)}})
+  {:status 400
+   :body {:msg (-> exception ex-data :msg)}})
 
 (defn- not-found-handler [exception request]
   {:status 404
-   :body {:code 1 :msg (-> exception ex-data :msg)}})
+   :body {:msg (-> exception ex-data :msg)}})
 
 (def exception-middleware
   (exception/create-exception-middleware

@@ -126,9 +126,15 @@
   (sql/get-by-id conn t id
     {:builder-fn rs/as-unqualified-lower-maps}))
 
-(defn find-by-keys [t w]
-  (sql/find-by-keys conn t w
-    {:builder-fn rs/as-unqualified-lower-maps}))
+(defn find-by-keys
+  ([t w]
+   (sql/find-by-keys conn t w
+     {:builder-fn rs/as-unqualified-lower-maps}))
+  ([t w ex]
+   (sql/find-by-keys conn t w
+     (merge
+       {:builder-fn rs/as-unqualified-lower-maps}
+       ex))))
 
 (defn find-one-by-keys [t w]
   (first
