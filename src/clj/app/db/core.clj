@@ -145,5 +145,15 @@
   (sql/insert! conn t info
     {:builder-fn rs/as-unqualified-lower-maps}))
 
-(defn execute! [sqlmap]
-  (jdbc/execute! conn sqlmap))
+(defn delete! [t w]
+  (sql/delete! conn t w))
+
+(defn execute!
+  ([sqlmap]
+   (jdbc/execute! conn sqlmap
+     {:builder-fn rs/as-unqualified-lower-maps}))
+  ([sqlmap opt]
+   (jdbc/execute! conn sqlmap
+     (merge
+       {:builder-fn rs/as-unqualified-lower-maps}
+       opt))))

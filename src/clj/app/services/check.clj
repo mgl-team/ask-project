@@ -1,6 +1,7 @@
 (ns app.services.check
   (:require
    [app.middleware.exception :as exception]
+   [app.db.core :as db]
    [buddy.hashers :as hashers]
    [java-time :as time]))
 
@@ -36,3 +37,14 @@
 (defn check-http-response [response]
   (if (= 1 (:code response))
     (throw (ex-info "service" {:type ::exception/check :msg (:msg response)}))))
+
+(defn check-own-entity [uinfo entity msg]
+  (if (not= (:id uinfo) (:user_id entity))
+    (exception/ex-throw msg)))
+
+(defn check-admin [uinfo msg]
+  (let [entity (db/get-by-id :users (:id uinfo))]
+    (check-must-exist entity "must exists")
+
+    (if (not= 1 (:level entity))
+      (exception/ex-throw msg))))
