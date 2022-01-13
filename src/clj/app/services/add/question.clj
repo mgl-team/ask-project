@@ -52,6 +52,7 @@
 
         (let [sqlmap {:insert-into :approval_log,
                       :values [{:status 1
+                                :approve_id id
                                 :data (:data entity)
                                 :approve_user_id (:id uinfo)}]}]
           (jdbc/execute-one! tx (hsql/format sqlmap)))
@@ -69,6 +70,7 @@
       (let [sqlmap {:insert-into :approval_log,
                     :values [{:status 0
                               :data (:data entity)
+                              :approve_id id
                               :approve_user_id (:id uinfo)
                               :reason reason}]}]
         (jdbc/execute-one! tx (hsql/format sqlmap))

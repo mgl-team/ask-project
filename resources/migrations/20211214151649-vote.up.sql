@@ -12,3 +12,5 @@ CREATE TABLE vote (
 CREATE INDEX vote_type_item_id ON vote (type, item_id);
 --;;
 CREATE INDEX vote_value ON vote (vote_value);
+--;;
+CREATE INDEX vote_user_type_item_value ON vote (user_id, type, item_id, vote_value);

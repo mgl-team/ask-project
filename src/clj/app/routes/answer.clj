@@ -13,12 +13,12 @@
             :parameters {:body {:content string?} :path {:id integer?}}
             :responses {200 {:body {:success boolean? :msg string? (ds/opt :data) any?}}}
             :handler (fn [{{body :body} :parameters {id :id} :path token :identity}]
-                       (ok (answer/create-model token id body)))}
+                       (ok (service/create-model token id body)))}
      :get {:summary "get list."
            :parameters {:path {:id integer?}}
            :responses {200 {:body {:success boolean? :msg string? (ds/opt :data) any?}}}
            :handler (fn [{{id :id} :path token :identity}]
-                      (ok (answer/get-models id)))}}]
+                      (ok (service/get-models id)))}}]
    ["/answers/:id"
     {:swagger    {:tags ["answers"]}
      ; :middleware [[middleware/wrap-restricted]]

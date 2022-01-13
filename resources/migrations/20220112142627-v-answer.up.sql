@@ -7,6 +7,7 @@ create or replace view v_answer as
     a.agree_count,
     a.comment_count,
     a.uninterested_count,
+    a.favorite_count,
     a.thanks_count,
     a.category_id,
     a.force_fold,

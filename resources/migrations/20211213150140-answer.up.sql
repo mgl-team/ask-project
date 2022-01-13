@@ -8,6 +8,7 @@ CREATE TABLE answer (
   comment_count int DEFAULT '0' ,
   uninterested_count int DEFAULT '0' ,
   thanks_count int DEFAULT '0' ,
+  favorite_count int DEFAULT '0' ,
   category_id int DEFAULT '0' ,
   ip bigint DEFAULT NULL,
   force_fold smallint DEFAULT '0' ,
@@ -29,6 +30,8 @@ CREATE INDEX answer_add_time ON answer (created_at);
 CREATE INDEX answer_uid ON answer (user_id);
 --;;
 CREATE INDEX answer_uninterested_count ON answer (uninterested_count);
+--;;
+CREATE INDEX answer_favorite_count ON answer (favorite_count);
 --;;
 CREATE INDEX answer_force_fold ON answer (force_fold);
 --;;

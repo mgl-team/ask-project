@@ -8,3 +8,5 @@ CREATE TABLE thanks (
 
 --;;
 CREATE INDEX thanks_type_item_id ON thanks (type, item_id);
+--;;
+CREATE INDEX thanks_user_id_type_item_id ON thanks (user_id, type, item_id);

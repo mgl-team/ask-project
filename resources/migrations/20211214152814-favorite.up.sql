@@ -7,6 +7,8 @@ CREATE TABLE favorite (
 );
 
 --;;
+CREATE INDEX favorite_user_type ON favorite (user_id, type, item_id);
+--;;
 CREATE INDEX favorite_type ON favorite (type);
 --;;
 CREATE INDEX favorite_item_id ON favorite (item_id);
