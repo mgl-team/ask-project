@@ -15,6 +15,7 @@
     [spec-tools.data-spec :as ds]
 
     [app.services.user.login :as login-service]
+    [app.routes.approve :as approve-route]
     [app.routes.question :as question-route]
     [app.routes.answer :as answer-route]
     [app.routes.topic :as topic-route]
@@ -62,6 +63,7 @@
            {:get (constantly (ok {:message "pong"}))}]]
 
          ;; other routes
+         approve-route/route
          question-route/route
          answer-route/route
          topic-route/route

@@ -27,7 +27,7 @@
 (defn edit-model [uinfo id params]
   (check-service/check-admin uinfo "must admin")
 
-  (if (and (= 1 (:status params))
+  (if (and (not= 1 (:status params))
            (empty? (:reason params)))
     (exception/ex-throw "reason"))
 
@@ -46,7 +46,7 @@
                     :set  (merge params
                             {:unverified_modify_count 0
                              :unverified_modify   ""
-                             :update_at [:raw "now()"]})}]
+                             :updated_at [:raw "now()"]})}]
 
         (jdbc/execute-one! tx (hsql/format sqlmap))
 
