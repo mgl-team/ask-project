@@ -26,6 +26,10 @@
      :msg "success"
      :data data}))
 
+(defn get-model [uinfo id]
+  (log/info "uinfo = " uinfo)
+  (let [entity (db/get-by-id :v_)]))
+
 (defn create-model [uinfo params]
   (log/info "uinfo = " uinfo)
   (log/info "params = " params)

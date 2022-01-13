@@ -8,8 +8,9 @@ CREATE TABLE comments (
   updated_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 ) ;
 
---;; type 1 question 2 ask 3 comment 4
-
+--;;
+CREATE INDEX comments_type ON comments (type);
+--;;
 CREATE INDEX comments_type_item_id ON comments (type, item_id);
 --;;
 CREATE INDEX comments_created_at ON comments (created_at);

@@ -2,22 +2,23 @@
   (:require
    [app.middleware :as middleware]
    [ring.util.http-response :refer :all]
-   [spec-tools.data-spec :as ds]))
+   [spec-tools.data-spec :as ds]
+   [app.services.app.answer :as service]))
 
 (def route
-  [["/answers"
+  [["/question/:id/answers"
     {:swagger {:tags ["answers"]}
      ; :middleware [[middleware/wrap-restricted]]
      :post {:summary "add."
-            :parameters {:body {}}
+            :parameters {:body {:content string?} :path {:id integer?}}
             :responses {200 {:body {:success boolean? :msg string? (ds/opt :data) any?}}}
-            :handler (fn [{{body :body} :parameters {:keys [identity]} :session}]
-                       (ok))}
+            :handler (fn [{{body :body} :parameters {id :id} :path token :identity}]
+                       (ok (answer/create-model token id body)))}
      :get {:summary "get list."
-           :parameters {:query {(ds/opt :page) int?, (ds/opt :perpage) int?}}
+           :parameters {:path {:id integer?}}
            :responses {200 {:body {:success boolean? :msg string? (ds/opt :data) any?}}}
-           :handler (fn [{{:keys [identity]} :session {:keys [query]} :parameters}]
-                      (ok))}}]
+           :handler (fn [{{id :id} :path token :identity}]
+                      (ok (answer/get-models id)))}}]
    ["/answers/:id"
     {:swagger    {:tags ["answers"]}
      ; :middleware [[middleware/wrap-restricted]]
