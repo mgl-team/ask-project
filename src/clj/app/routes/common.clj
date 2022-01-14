@@ -42,7 +42,8 @@
       :post {:summary "add."
              :middleware [[middleware/wrap-restricted]]
              :parameters {:path {:id integer?}
-                          :body {:message string?}}
+                          :body {:message string?
+                                 (ds/opt :pid) integer?}}
              :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
                                                             , (ds/opt :data) any?}}}
              :handler (fn [{{{id :id} :path body :body} :parameters  token :identity}]

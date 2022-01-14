@@ -33,6 +33,7 @@
 
 (def token-backend
   (jwe-backend {:secret secret
+                ; :token-name "Barear"
                 :options {:alg :a256kw
                           :enc :a128gcm}}))
 

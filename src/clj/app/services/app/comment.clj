@@ -6,6 +6,7 @@
    [next.jdbc.sql :as sql]
    [next.jdbc.result-set :as rs]
    [clojure.tools.logging :as log]
+   [clojure.zip :as zip]
    [cuerdas.core :as str]
    [cheshire.core :as cheshire]
    [app.db.core :as db :refer [conn]]
@@ -13,14 +14,22 @@
    [app.services.check :as check-service]
    [app.middleware.exception :as exception]))
 
+(defn nested-coll [root coll]
+  (let [by-parent (group-by :pid coll)]
+    (loop [z (zip/zipper some? #(by-parent (:id %)) #(assoc %1 :children %2) (first (by-parent nil)))]
+      (if (zip/end? z)
+        (zip/root z)
+        (recur (zip/next (zip/edit z identity)))))))
+
 (defn get-models [uinfo pname pid]
   (log/info "uinfo = " uinfo)
-  (let [data (db/find-by-keys :v_comment
-               {:item_id pid :type pname}
-               {:order-by [[:id :desc]]})]
+  (let [data (concat [{:id 0 :pid nil}] (db/find-by-keys :v_comment
+                                          {:item_id pid :type pname}
+                                          {:order-by [[:id :desc]]}))
+        nested-data (nested-coll {:id 0 :pid nil} data)]
     {:code 0
      :msg "success"
-     :data data}))
+     :data nested-data}))
 
 (defn create-model [uinfo pname pid params]
   (log/info "uinfo = " uinfo)
