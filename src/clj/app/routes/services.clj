@@ -19,7 +19,9 @@
     [app.routes.question :as question-route]
     [app.routes.answer :as answer-route]
     [app.routes.topic :as topic-route]
-    [app.routes.user :as user-route]))
+    [app.routes.user :as user-route]
+
+    [app.routes.common :as common-route]))
 
 (defn service-routes []
   (into []
@@ -67,4 +69,6 @@
          question-route/route
          answer-route/route
          topic-route/route
-         user-route/route)))
+         user-route/route
+
+         common-route/route)))

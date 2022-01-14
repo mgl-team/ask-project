@@ -13,8 +13,8 @@
    [app.services.check :as check-service]
    [app.middleware.exception :as exception]))
 
-(defn get-models [uinfo pid]
-  (log/info "uinfo = " uinfo)
+(defn get-models [pid]
+  (log/info " pid = " pid)
   (let [data (db/find-by-keys :v_answer  {:question_id pid}
               {:order-by [[:id :desc]]})]
     {:code 0
@@ -22,13 +22,14 @@
      :data data}))
 
 (defn create-model [uinfo pid params]
-  (log/info "uinfo = " uinfo)
+  (log/info "uinfo = " uinfo " pid = " pid)
   (log/info "params = " params)
   (jdbc/with-transaction [tx conn]
     (sql/insert! tx :answer
       (assoc params :question_id pid
                     :user_id (:id uinfo)))
-    (let [entity (sql/get-by-id tx :question pid)
+    (let [entity (sql/get-by-id tx :question pid
+                   {:builder-fn rs/as-unqualified-lower-maps})
           user-answer (sql/find-by-keys tx :answer {:user_id (:id uinfo)
                                                     :question_id pid})]
       (sql/update! tx :question
@@ -36,7 +37,8 @@
           { :updated_at (time/local-date-time)
             :answer_count (inc (:answer_count entity))}
           (if (empty? user-answer)
-            { :answer_user (inc (:answer_user entity))})))))
+            { :answer_user (inc (:answer_user entity))}))
+        {:id pid})))
   {:code 0
    :msg "success"})
 
@@ -58,14 +60,16 @@
 
     (check-service/check-own-entity uinfo model "must own entity")
 
+    (log/warn "model = " (select-keys model [:content]))
     (jdbc/with-transaction [tx conn]
       (sql/delete! tx :answer {:id id})
 
-      (let [sqlmap-approval {:insert-into :approval
+      (let [json-value (cheshire/generate-string (select-keys model [:content]))
+            sqlmap-approval {:insert-into :approval
                              :values [{:item_id id
                                        :type "answer"
                                        :user_id (:id uinfo)
-                                       :data (select-keys model [:content])}]}
+                                       :data json-value}]}
 
             result (jdbc/execute-one! tx (hsql/format sqlmap-approval)
                        {:return-keys true
@@ -74,7 +78,7 @@
             sqlmap {:insert-into :approval_log,
                     :values [{:status 1
                               :approve_id (:id result)
-                              :data (select-keys model [:content])
+                              :data json-value
                               :approve_user_id 0}]}]
 
         (jdbc/execute-one! tx (hsql/format sqlmap)))))

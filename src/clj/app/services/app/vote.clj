@@ -19,6 +19,18 @@
           entity (sql/find-by-keys tx :vote map-value
                     {:builder-fn rs/as-unqualified-lower-maps})
 
+          ;; ----------------------
+          opposite-map-value (assoc map-value :vote_value (if (= 1 (:vote_value params))
+                                                            -1
+                                                            1))
+          opposite-entity (sql/find-by-keys tx :vote opposite-map-value
+                             {:builder-fn rs/as-unqualified-lower-maps})
+
+          opposite-count-name (if (= 1 (:vote_value params))
+                                :against_count
+                                :agree_count)
+          ;; ----------------------
+
           parent-count-name (if (= 1 (:vote_value params))
                               :agree_count
                               :against_count)
@@ -26,10 +38,16 @@
           [sql-fn parent-count-fn] (if (empty? entity)
                                      [sql/insert! :+]
                                      [sql/delete! :-])
-          sqlmap {:update pname
-                  :set {parent-count-name  [parent-count-fn parent-count-name 1]}
+          sqlmap {:update (keyword pname)
+                  :set
+                  (merge
+                    {parent-count-name  [parent-count-fn parent-count-name 1]}
+                    (if-not (empty? opposite-entity)
+                      {opposite-count-name [:- opposite-count-name 1]}))
                   :where [:= :id pid]}]
 
+      (when-not (empty? opposite-entity)
+        (sql/delete! tx :vote opposite-map-value))
 
       (sql-fn tx :vote map-value)
 

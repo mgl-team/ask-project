@@ -9,7 +9,7 @@
    [app.services.check :as check-service]
    [app.middleware.exception :as exception]))
 
-(defn favorite [uinfo pname pid params]
+(defn favorite [uinfo pname pid]
   (jdbc/with-transaction [tx conn]
     (let [map-value {:item_id pid
                      :type pname
@@ -22,7 +22,7 @@
           [sql-fn parent-count-fn] (if (empty? entity)
                                      [sql/insert! :+]
                                      [sql/delete! :-])
-          sqlmap {:update pname
+          sqlmap {:update (keyword pname)
                   :set {:favorite_count  [parent-count-fn :favorite_count 1]}
                   :where [:= :id pid]}]
 

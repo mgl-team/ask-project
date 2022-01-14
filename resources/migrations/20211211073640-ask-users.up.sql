@@ -12,7 +12,7 @@ CREATE TABLE user_ex (
   notification_unread int NOT NULL DEFAULT '0' ,
   inbox_unread int NOT NULL DEFAULT '0' ,
   inbox_recv int NOT NULL DEFAULT '0' ,
-  fans_count int NOT NULL DEFAULT '0' ,
+  focus_count int NOT NULL DEFAULT '0' ,
   friend_count int NOT NULL DEFAULT '0' ,
   invite_count int NOT NULL DEFAULT '0' ,
   article_count int NOT NULL DEFAULT '0' ,

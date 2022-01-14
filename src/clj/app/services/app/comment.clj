@@ -30,8 +30,8 @@
       (assoc params :item_id pid
                     :type pname
                     :user_id (:id uinfo)))
-    (let [sqlmap {:update pname
-                  :set {:comment_count  [:+ :comment_count :1]}
+    (let [sqlmap {:update (keyword pname)
+                  :set {:comment_count  [:+ :comment_count 1]}
                   :where [:= :id pid]}]
       (jdbc/execute-one! tx (hsql/format sqlmap))))
 
@@ -50,7 +50,8 @@
   {:code 0
    :msg "success"})
 
-(defn remove-model [uinfo id]
+(defn remove-model [uinfo pname pid id]
+  (log/info "uinfo = " uinfo " pname " pname " pid " pid " id " id)
   (let [model (db/get-by-id :comments id)]
     (check-service/check-must-exist model "must exists")
 
@@ -59,20 +60,26 @@
     (jdbc/with-transaction [tx conn]
       (sql/delete! tx :comments {:id id})
 
-      (let [sqlmap-approval {:insert-into :approval
-                             :values [{:item_id (:id result)
+      (let [sqlmap {:update (keyword pname)
+                    :set {:comment_count  [:- :comment_count 1]}
+                    :where [:= :id pid]}]
+        (jdbc/execute-one! tx (hsql/format sqlmap)))
+
+      (let [json-value (cheshire/generate-string (select-keys model [:message]))
+            sqlmap-approval {:insert-into :approval
+                             :values [{:item_id id
                                        :type "comment"
                                        :user_id (:id uinfo)
-                                       :data (select-keys model [:message])}]}
+                                       :data json-value}]}
 
-            result (jdbc/execute-one! tx (hsql/format sqlmap)
+            result (jdbc/execute-one! tx (hsql/format sqlmap-approval)
                        {:return-keys true
                         :builder-fn rs/as-unqualified-lower-maps})
 
             sqlmap {:insert-into :approval_log,
                     :values [{:status 1
                               :approve_id (:id result)
-                              :data (select-keys model [:message])
+                              :data json-value
                               :approve_user_id 0}]}]
 
         (jdbc/execute-one! tx (hsql/format sqlmap)))))

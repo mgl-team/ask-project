@@ -1,4 +1,4 @@
-(ns app.services.app.thanks
+(ns app.services.app.focus
   (:require
    [honey.sql :as hsql]
    [next.jdbc :as jdbc]
@@ -9,13 +9,13 @@
    [app.services.check :as check-service]
    [app.middleware.exception :as exception]))
 
-(defn thanks [uinfo pname pid]
+(defn focus [uinfo pname pid]
   (jdbc/with-transaction [tx conn]
     (let [map-value {:item_id pid
                      :type pname
                      :user_id (:id uinfo)}
 
-          entity (sql/find-by-keys tx :thanks map-value
+          entity (sql/find-by-keys tx :focus map-value
                     { :columns [:id]
                       :builder-fn rs/as-unqualified-lower-maps})
 
@@ -23,11 +23,11 @@
                                      [sql/insert! :+]
                                      [sql/delete! :-])
           sqlmap {:update (keyword pname)
-                  :set {:thanks_count  [parent-count-fn :thanks_count 1]}
+                  :set {:focus_count  [parent-count-fn :focus_count 1]}
                   :where [:= :id pid]}]
 
 
-      (sql-fn tx :thanks map-value)
+      (sql-fn tx :focus map-value)
 
       (jdbc/execute-one! tx (hsql/format sqlmap))))
 
