@@ -6,7 +6,8 @@
    [app.services.app.thanks :as thanks-service]
    [app.services.app.vote :as vote-service]
    [app.services.app.favorite :as favorite-service]
-   [app.services.app.comment :as comment-service]))
+   [app.services.app.comment :as comment-service]
+   [app.services.app.draft :as draft-service]))
 
 (def route
   [["/answers/:id/thanks"
@@ -72,4 +73,39 @@
                    :handler    (fn [{{body     :body
                                       {id :id pid :pid} :path} :parameters
                                      token           :identity}]
-                                 (ok (comment-service/remove-model token "answer" pid id)))}}]])
+                                 (ok (comment-service/remove-model token "answer" pid id)))}}]
+   ["/drafts"
+     {:swagger {:tags ["draft"]}
+      :middleware [[middleware/wrap-restricted]]
+      :post {:summary "add."
+             :parameters {:body {:item_id integer?
+                                 :type string?
+                                 :data string?}}
+             :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
+                                                            , (ds/opt :data) any?}}}
+             :handler (fn [{{body :body} :parameters  token :identity}]
+                        (ok (draft-service/create-entity token body)))}
+      :get {:summary "get list."
+            :parameters {:query {(ds/opt :type) string?}}
+            :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
+                                                           , (ds/opt :data) any?}}}
+            :handler (fn [{{params :query} :parameters token :identity}]
+                       (ok (draft-service/get-entities token params)))}}]
+   ["/drafts/:id"
+     {:swagger {:tags ["draft"]}
+      :middleware [[middleware/wrap-restricted]]
+      :put {:summary "edit."
+            :parameters {:path {:id integer?}
+                         :body {:data string?}}
+            :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
+                                                           , (ds/opt :data) any?}}}
+            :handler (fn [{{{id :id} :path body :body} :parameters  token :identity}]
+                       (ok (draft-service/edit-entity token id body)))}
+      :delete     {:summary    "remove."
+                   :parameters {:path {:id integer?}}
+                   :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
+                                                                  , (ds/opt :data) any?}}}
+                   :handler    (fn [{{body     :body
+                                      {id :id} :path} :parameters
+                                     token           :identity}]
+                                 (ok (draft-service/remove-entity token id)))}}]])

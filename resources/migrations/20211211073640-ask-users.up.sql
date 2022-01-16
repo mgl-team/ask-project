@@ -29,7 +29,7 @@ CREATE TABLE user_ex (
   reputation int DEFAULT '0' ,
   reputation_update_time int DEFAULT '0' ,
   integral int DEFAULT '0',
-  draft_count int DEFAULT NULL,
+  draft_count int DEFAULT '0',
   default_timezone varchar(32) DEFAULT NULL,
   recent_topics text
 );

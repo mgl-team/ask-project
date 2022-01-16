@@ -1,13 +1,6 @@
 (ns app.services.app.report
   (:require
-   [honey.sql :as hsql]
-   [next.jdbc :as jdbc]
-   [next.jdbc.sql :as sql]
-   [next.jdbc.result-set :as rs]
-   [clojure.tools.logging :as log]
-   [app.db.core :as db]
-   [app.services.check :as check-service]
-   [app.middleware.exception :as exception]))
+   [app.db.core :as db]))
 
 (defn report [uinfo pname pid params]
   (let [map-value {:item_id pid
