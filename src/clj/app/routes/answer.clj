@@ -3,7 +3,8 @@
    [app.middleware :as middleware]
    [ring.util.http-response :refer :all]
    [spec-tools.data-spec :as ds]
-   [app.services.app.answer :as service]))
+   [app.services.app.answer :as service]
+   [app.services.app.report :as report-service]))
 
 (def route
   [["/questions/:id/answers"
@@ -42,4 +43,13 @@
                   :handler    (fn [{{body     :body
                                      {id :id} :path} :parameters
                                     token           :identity}]
-                                (ok (service/remove-model token id)))}}]])
+                                (ok (service/remove-model token id)))}}]
+   ["/answers/:id/report"
+    {:swagger    {:tags ["answers"]}
+     :middleware [[middleware/wrap-restricted]]
+     :post {:summary "add."
+            :parameters {:body {:reason string?} :path {:id integer?}}
+            :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
+                                                           , (ds/opt :data) any?}}}
+            :handler (fn [{{body :body {id :id} :path} :parameters  token :identity}]
+                       (ok (report-service/report token "answer" id body)))}}]])
