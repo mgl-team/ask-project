@@ -89,3 +89,6 @@
 
   {:code 0
    :msg  "success"})
+
+(defn get-code [params]
+  (sms-service/send-sms {:phone (:mobile params)}))

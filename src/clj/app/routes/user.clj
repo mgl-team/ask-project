@@ -3,6 +3,7 @@
    [ring.util.http-response :refer :all]
    [spec-tools.data-spec :as ds]
    [clojure.tools.logging :as log]
+   [app.config :refer [env]]
    [app.middleware :as middleware]
    [app.services.user.login :as login-service]
    [app.services.user.register :as register-service]
@@ -51,6 +52,16 @@
             :handler (fn [{{:keys [body]} :parameters headers :headers addr :remote-addr}]
                        {:status 200 :body
                         (info-service/send-code body headers addr)})}}]
+   (if (true? (:dev env))
+     ["/users/get-code"
+      {:swagger {:tags ["users"]}
+       :post {:summary "send code."
+              :parameters {:body {:mobile string?}}
+              :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
+                                                             , (ds/opt :token) any?}}}
+              :handler (fn [{{:keys [body]} :parameters headers :headers addr :remote-addr}]
+                         {:status 200 :body
+                          (info-service/send-code body headers addr)})}}])
    ["/users/info"
     {:swagger {:tags ["users"]}
      :middleware [middleware/wrap-restricted]

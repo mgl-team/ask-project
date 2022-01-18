@@ -12,3 +12,6 @@
 
 (defn check-sms [params]
   (http-service/post (get-url "/api/check") params))
+
+(defn get-code [params]
+  (http-service/get (str (get-url "/api/get") (:mobile params))))
