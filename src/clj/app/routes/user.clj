@@ -52,7 +52,7 @@
             :handler (fn [{{:keys [body]} :parameters headers :headers addr :remote-addr}]
                        {:status 200 :body
                         (info-service/send-code body headers addr)})}}]
-   (if (true? (:dev env))
+   (if (:dev env)
      ["/users/get-code"
       {:swagger {:tags ["users"]}
        :post {:summary "send code."
