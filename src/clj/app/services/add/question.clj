@@ -46,7 +46,8 @@
                     :set  (merge params
                             {:unverified_modify_count 0
                              :unverified_modify   ""
-                             :updated_at [:raw "now()"]})}]
+                             :updated_at [:raw "now()"]})
+                    :where [:= :id (:item_id entity)]}]
 
         (jdbc/execute-one! tx (hsql/format sqlmap))
 

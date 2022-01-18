@@ -34,7 +34,7 @@
      ::exception (partial handler "exception")
 
      ;; ex-data with ::exception or ::check
-     ::check custom-handler
+     ::exception/check custom-handler
 
      ::not-found not-found-handler
 

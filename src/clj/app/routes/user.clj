@@ -47,8 +47,8 @@
     {:swagger {:tags ["users"]}
      :post {:summary "send code."
             :parameters {:body {:mobile string? :direction int?}}
-            :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
-                                                           , (ds/opt :token) any?}}}
+            ; :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
+            ;                                                , (ds/opt :token) any?}}}
             :handler (fn [{{:keys [body]} :parameters headers :headers addr :remote-addr}]
                        {:status 200 :body
                         (info-service/send-code body headers addr)})}}]

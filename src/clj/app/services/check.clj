@@ -36,7 +36,8 @@
 
 (defn check-http-response [response]
   (if (= 1 (:code response))
-    (throw (ex-info "service" {:type ::exception/check :msg (:msg response)}))))
+    ; (throw (ex-info "service" {:type ::exception/check :msg (:msg response)}))
+    (exception/ex-throw (:msg response))))
 
 (defn check-own-entity [uinfo entity msg]
   (if (not= (:id uinfo) (:user_id entity))

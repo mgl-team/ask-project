@@ -52,7 +52,11 @@
     ;   (check-service/check-time-after (:user_token-send_at entity) send-time "time limit"))
 
     ;; check password
-    (if (:password params)
+    (when (:password params)
+
+      (if (empty? (:encrypted_password entity))
+        (exception/ex-throw "password not match!"))
+
 
       (if-not (hashers/check (:password params) (:encrypted_password entity))
 

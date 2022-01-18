@@ -77,7 +77,8 @@
 
     {:code 0
      :msg  "success"
-     :data {:mobile (:mobile params) :exists (if (empty? entity) false true)}}))
+     :data {:mobile (:mobile params) :exists (if (empty? entity) false true)
+            :password (if (:encrypted_password entity) true false)}}))
 
 (defn send-code [params headers addr]
   (let [entity (db/find-by-keys :users {:mobile (:mobile params)})]
