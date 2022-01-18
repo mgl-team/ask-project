@@ -7,7 +7,8 @@
    [app.services.app.vote :as vote-service]
    [app.services.app.favorite :as favorite-service]
    [app.services.app.comment :as comment-service]
-   [app.services.app.draft :as draft-service]))
+   [app.services.app.draft :as draft-service]
+   [app.services.app.report :as report-service]))
 
 (def route
   [["/answers/:id/thanks"
@@ -108,4 +109,13 @@
                    :handler    (fn [{{body     :body
                                       {id :id} :path} :parameters
                                      token           :identity}]
-                                 (ok (draft-service/remove-entity token id)))}}]])
+                                 (ok (draft-service/remove-entity token id)))}}]
+   ["/comments/:id/report"
+    {:swagger    {:tags ["comments"]}
+     :middleware [[middleware/wrap-restricted]]
+     :post {:summary "add."
+            :parameters {:body {:reason string?} :path {:id integer?}}
+            :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
+                                                           , (ds/opt :data) any?}}}
+            :handler (fn [{{body :body {id :id} :path} :parameters  token :identity}]
+                       (ok (report-service/report token "comments" id body)))}}]])

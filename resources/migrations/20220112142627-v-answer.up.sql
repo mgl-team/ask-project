@@ -18,4 +18,5 @@ create or replace view v_answer as
     b.avatar_file
   from answer a
   left join user_ex b
-    on a.user_id = b.id;
+    on a.user_id = b.id
+    where status = 0;

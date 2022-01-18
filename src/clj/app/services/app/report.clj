@@ -1,6 +1,8 @@
 (ns app.services.app.report
   (:require
-   [app.db.core :as db]))
+   [app.db.core :as db]
+   [app.services.check :as check-service]
+   [app.middleware.exception :as exception]))
 
 (defn report [uinfo pname pid params]
   (let [map-value {:item_id pid
