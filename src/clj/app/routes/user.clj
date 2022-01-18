@@ -61,7 +61,7 @@
                                                              , (ds/opt :token) any?}}}
               :handler (fn [{{:keys [body]} :parameters headers :headers addr :remote-addr}]
                          {:status 200 :body
-                          (info-service/send-code body headers addr)})}}])
+                          (info-service/get-code body)})}}])
    ["/users/info"
     {:swagger {:tags ["users"]}
      :middleware [middleware/wrap-restricted]
