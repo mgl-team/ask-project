@@ -20,6 +20,7 @@
     [app.routes.answer :as answer-route]
     [app.routes.topic :as topic-route]
     [app.routes.user :as user-route]
+    [app.routes.file :as file-route]
 
     [app.routes.common :as common-route]))
 
@@ -70,5 +71,6 @@
          answer-route/route
          topic-route/route
          user-route/route
+         file-route/route
 
          common-route/route)))
