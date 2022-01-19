@@ -93,3 +93,8 @@
 
 (defn get-code [params]
   (sms-service/get-code params))
+
+(defn update-ex [uinfo params]
+  (db/update! :user_ex params {:id (:id uinfo)})
+  {:code 0
+   :msg  "success"})
