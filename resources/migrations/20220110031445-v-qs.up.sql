@@ -13,7 +13,9 @@ create or replace view v_question as
     a.against_count,
     a.best_answer,
     b.user_name,
-    b.avatar_file
+    b.avatar_file,
+    a.updated_at,
+    a.created_at
   from question a
   left join user_ex b
     on a.user_id = b.id
