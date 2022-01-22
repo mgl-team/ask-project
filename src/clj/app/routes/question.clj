@@ -47,13 +47,13 @@
                                     token           :identity}]
                                 (ok (service/remove-model token id)))}
      :get        {:summary    "get one."
+                  :middleware [[middleware/wrap-restricted]]
                   :parameters {:path {:id integer?}}
-                  :responses  {200 {:body {:success       boolean?
-                                           :msg           string?
-                                           (ds/opt :data) any?}}}
-                  :handler    (fn [{{:keys [identity]} :session
+                  :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
+                                                                 , (ds/opt :data) any?}}}
+                  :handler    (fn [{token              :identity
                                     {{id :id} :path}   :parameters}]
-                                (ok))}}]
+                                (ok (service/get-model token id)))}}]
    ["/questions/:id/focus"
     {:swagger    {:tags ["questions"]}
      :post {:summary "focus."

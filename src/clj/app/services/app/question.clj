@@ -28,7 +28,14 @@
 
 (defn get-model [uinfo id]
   (log/info "uinfo = " uinfo)
-  (let [entity (db/get-by-id :v_)]))
+  (let [focus (db/find-one-by-keys :focus {:user_id (:id uinfo)
+                                           :item_id id
+                                           :type "question"})
+        answer (db/find-one-by-keys :answer {:user_id (:id uinfo)
+                                             :question_id id})]
+    {:code 0
+     :msg "success"
+     :data {:focus_id (:id focus) :answer_id (:id answer)}}))
 
 (defn create-model [uinfo params]
   (log/info "uinfo = " uinfo)
