@@ -81,6 +81,11 @@
                               :data json-value
                               :approve_user_id 0}]}]
 
+        (jdbc/execute-one! tx (hsql/format sqlmap)))
+
+      (let [sqlmap {:update :question
+                    :set {:answer_count  [:- :answer_count 1]}
+                    :where [:= :id (:question_id model)]}]
         (jdbc/execute-one! tx (hsql/format sqlmap)))))
   {:code 0
    :msg "success"})
