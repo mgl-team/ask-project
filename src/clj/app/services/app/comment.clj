@@ -29,7 +29,7 @@
         nested-data (nested-coll {:id 0 :pid nil} data)]
     {:code 0
      :msg "success"
-     :data nested-data}))
+     :data (or (-> nested-data :children) [])}))
 
 (defn create-model [uinfo pname pid params]
   (log/info "uinfo = " uinfo)
