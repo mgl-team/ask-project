@@ -13,13 +13,34 @@
    [app.services.check :as check-service]
    [app.middleware.exception :as exception]))
 
-(defn get-models [pid]
+(defn get-models [uinfo pid]
   (log/info " pid = " pid)
-  (let [data (db/find-by-keys :v_answer  {:question_id pid}
-              {:order-by [[:id :desc]]})]
-    {:code 0
-     :msg "success"
-     :data data}))
+  (if (:id uinfo)
+    (let [sqlmap {:select [:a.*
+                           [:b.id "user_thanks_id"]
+                           [[:case [:= :c.vote_value 1] 1 [:= :c.vote_value nil] 0 :else 0] "user_vote_up"]
+                           [[:case [:= :c.vote_value 1] 0 [:= :c.vote_value nil] 0 :else 1] "user_vote_down"]]
+                  :from [[:v_answer :a]]
+                  :left-join [[:thanks :b] [:and
+                                            [:= :a.id :b.item_id]
+                                            [:= :b.type "answer"]
+                                            [:= :b.user_id (:id uinfo)]]
+                              [:vote :c] [:and
+                                          [:= :a.id :c.item_id]
+                                          [:= :c.type "answer"]
+                                          [:= :c.user_id (:id uinfo)]]]
+                  :where [:= :question_id pid]
+                  :order-by [[:id :desc]]}
+          data (db/execute! (hsql/format sqlmap))]
+      {:code 0
+       :msg "success"
+       :data data})
+
+    (let [data (db/find-by-keys :v_answer  {:question_id pid}
+                {:order-by [[:id :desc]]})]
+      {:code 0
+       :msg "success"
+       :data data})))
 
 (defn create-model [uinfo pid params]
   (log/info "uinfo = " uinfo " pid = " pid)
