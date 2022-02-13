@@ -17,7 +17,7 @@
   (log/info " pid = " pid)
   (if (:id uinfo)
     (let [sqlmap {:select [:a.*
-                           [:b.id "user_thanks_id"]
+                           [[:case [:not= :b.id nil] 1 :else 0] "user_thanks"]
                            [[:case [:= :c.vote_value 1] 1 [:= :c.vote_value nil] 0 :else 0] "user_vote_up"]
                            [[:case [:= :c.vote_value 1] 0 [:= :c.vote_value nil] 0 :else 1] "user_vote_down"]]
                   :from [[:v_answer :a]]
