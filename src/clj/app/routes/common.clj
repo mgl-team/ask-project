@@ -118,4 +118,14 @@
             :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
                                                            , (ds/opt :data) any?}}}
             :handler (fn [{{body :body {id :id} :path} :parameters  token :identity}]
-                       (ok (report-service/report token "comments" id body)))}}]])
+                       (ok (report-service/report token "comments" id body)))}}]
+                       
+   ["/comments/:id/like"
+    {:swagger {:tags ["comments"]}
+     :middleware [[middleware/wrap-restricted]]
+     :post {:summary "add."
+            :parameters {:path {:id integer?}}
+            :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
+                                                           , (ds/opt :data) any?}}}
+            :handler (fn [{{body :body {id :id} :path} :parameters  token :identity}]
+                       (ok (thanks-service/thanks token "comment" id)))}}]])

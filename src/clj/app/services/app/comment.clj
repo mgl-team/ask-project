@@ -23,13 +23,28 @@
 
 (defn get-models [uinfo pname pid]
   (log/info "uinfo = " uinfo)
-  (let [data (concat [{:id 0 :pid nil}] (db/find-by-keys :v_comment
-                                          {:item_id pid :type pname}
-                                          {:order-by [[:id :desc]]}))
-        nested-data (nested-coll {:id 0 :pid nil} data)]
-    {:code 0
-     :msg "success"
-     :data (or (-> nested-data :children) [])}))
+  (if (:id uinfo)
+    (let [sqlmap {:select [:a.*]
+                          [[:case [:not= :b.id nil] 1 :else 0] "user_like"]
+                  :from [[:v_comment :a]]
+                  :left-join [[:thanks :b] [:and
+                                            [:= :a.id :b.item_id]
+                                            [:= :b.type "comment"]
+                                            [:= :b.user_id (:id uinfo)]]]
+                  :where [:and [:= :item_id pid]
+                               [:= :type pname]]
+                  :order-by [[:id :desc]]}
+          data (db/execute! (hsql/format sqlmap))]
+      {:code 0
+       :msg "success"
+       :data data})
+    (let [data (concat [{:id 0 :pid nil}] (db/find-by-keys :v_comment
+                                            {:item_id pid :type pname}
+                                            {:order-by [[:id :desc]]}))
+          nested-data (nested-coll {:id 0 :pid nil} data)]
+      {:code 0
+       :msg "success"
+       :data (or (-> nested-data :children) [])})))
 
 (defn create-model [uinfo pname pid params]
   (log/info "uinfo = " uinfo)

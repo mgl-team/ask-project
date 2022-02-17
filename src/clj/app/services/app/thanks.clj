@@ -10,6 +10,7 @@
    [app.middleware.exception :as exception]))
 
 (defn thanks [uinfo pname pid]
+  "thanks = like"
   (jdbc/with-transaction [tx conn]
     (let [map-value {:item_id pid
                      :type pname
