@@ -24,8 +24,8 @@
 (defn get-models [uinfo pname pid]
   (log/info "uinfo = " uinfo)
   (if (:id uinfo)
-    (let [sqlmap {:select [:a.*]
-                          [[:case [:not= :b.id nil] 1 :else 0] "user_like"]
+    (let [sqlmap {:select [:a.*
+                           [[:case [:not= :b.id nil] 1 :else 0] "user_like"]]
                   :from [[:v_comment :a]]
                   :left-join [[:thanks :b] [:and
                                             [:= :a.id :b.item_id]

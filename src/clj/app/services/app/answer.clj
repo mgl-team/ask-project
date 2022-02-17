@@ -19,7 +19,8 @@
     (let [sqlmap {:select [:a.*
                            [[:case [:not= :b.id nil] 1 :else 0] "user_thanks"]
                            [[:case [:= :c.vote_value 1] 1 [:= :c.vote_value nil] 0 :else 0] "user_vote_up"]
-                           [[:case [:= :c.vote_value 1] 0 [:= :c.vote_value nil] 0 :else 1] "user_vote_down"]]
+                           [[:case [:= :c.vote_value 1] 0 [:= :c.vote_value nil] 0 :else 1] "user_vote_down"]
+                           [[:case [:not= :d.id nil] 1 :else 0] "user_favorite"]]
                   :from [[:v_answer :a]]
                   :left-join [[:thanks :b] [:and
                                             [:= :a.id :b.item_id]
@@ -28,7 +29,11 @@
                               [:vote :c] [:and
                                           [:= :a.id :c.item_id]
                                           [:= :c.type "answer"]
-                                          [:= :c.user_id (:id uinfo)]]]
+                                          [:= :c.user_id (:id uinfo)]]
+                              [:favorite :d] [:and
+                                              [:= :a.id :d.item_id]
+                                              [:= :d.type "answer"]
+                                              [:= :d.user_id (:id uinfo)]]]
                   :where [:= :question_id pid]
                   :order-by [[:id :desc]]}
           data (db/execute! (hsql/format sqlmap))]

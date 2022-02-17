@@ -18,10 +18,24 @@
         {page :page, perpage :perpage :or {page 1, perpage 10}} page-params
         condition (dissoc params :offset :limit)
         condition (if (empty? condition) :all condition)
-        data (db/find-by-keys :v_question condition
-              {:order-by [[:id :desc]]
+        data
+        (if (:id uinfo)
+          (db/execute!
+            (hsql/format
+              {:select [:a.*
+                        [[:case [:not= :b.id nil] 1 :else 0] "user_focus"]]
+               :from [[:v_question :a]]
+               :left-join [[:focus :b] [:and
+                                        [:= :a.id :b.item_id]
+                                        [:= :b.type "question"]
+                                        [:= :b.user_id (:id uinfo)]]]
+               :order-by [[:id :desc]]
                :offset (* (dec page) perpage)
-               :limit perpage})]
+               :fetch perpage}))
+          (db/find-by-keys :v_question condition
+           {:order-by [[:id :desc]]
+            :offset (* (dec page) perpage)
+            :limit perpage}))]
     {:code 0
      :msg "success"
      :data data}))
