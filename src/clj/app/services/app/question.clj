@@ -29,7 +29,7 @@
                                         [:= :a.id :b.item_id]
                                         [:= :b.type "question"]
                                         [:= :b.user_id (:id uinfo)]]]
-               :order-by [[:id :desc]]
+               :order-by [[:a.id :desc]]
                :offset (* (dec page) perpage)
                :fetch perpage}))
           (db/find-by-keys :v_question condition

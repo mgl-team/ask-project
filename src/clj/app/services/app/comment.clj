@@ -31,8 +31,8 @@
                                             [:= :a.id :b.item_id]
                                             [:= :b.type "comment"]
                                             [:= :b.user_id (:id uinfo)]]]
-                  :where [:and [:= :item_id pid]
-                               [:= :type pname]]
+                  :where [:and [:= :a.item_id pid]
+                               [:= :a.type pname]]
                   :order-by [[:id :desc]]}
           data (db/execute! (hsql/format sqlmap))]
       {:code 0
