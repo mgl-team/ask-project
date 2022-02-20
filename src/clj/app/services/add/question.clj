@@ -18,10 +18,11 @@
 (defn get-models [uinfo]
   (check-service/check-admin uinfo "must admin")
 
-  (let [data (->> (db/find-by-keys :v_add_approve :all {:order-by [[:created_at :desc]] :fetch 10})
+  (let [data (->> (db/find-by-keys :v_add_approve :all {:order-by [[:created_at :desc]]
+                                                        :fetch    10})
                   (map #(assoc % :data (cheshire/parse-string (:data %) true))))]
     {:code 0
-     :msg ""
+     :msg  ""
      :data data}))
 
 (defn edit-model [uinfo id params]
@@ -43,25 +44,25 @@
     (jdbc/with-transaction [tx conn]
       (let [params (cheshire/parse-string (:data entity) true)
             sqlmap {:update :question,
-                    :set  (merge params
-                            {:unverified_modify_count 0
-                             :unverified_modify   ""
-                             :updated_at [:raw "now()"]})
-                    :where [:= :id (:item_id entity)]}]
+                    :set    (merge params
+                                   {:unverified_modify_count 0
+                                    :unverified_modify       ""
+                                    :updated_at              [:raw "now()"]})
+                    :where  [:= :id (:item_id entity)]}]
 
         (jdbc/execute-one! tx (hsql/format sqlmap))
 
         (let [sqlmap {:insert-into :approval_log,
-                      :values [{:status 1
-                                :approve_id id
-                                :data (:data entity)
-                                :approve_user_id (:id uinfo)}]}]
+                      :values      [{:status          1
+                                     :approve_id      id
+                                     :data            (:data entity)
+                                     :approve_user_id (:id uinfo)}]}]
           (jdbc/execute-one! tx (hsql/format sqlmap)))
 
         (sql/update! tx :approval {:status 1} {:id id})))
 
     {:code 0
-     :msg ""}))
+     :msg  ""}))
 
 (defn approve-no [uinfo id reason]
   (let [entity (db/get-by-id :approval id)]
@@ -69,14 +70,14 @@
 
     (jdbc/with-transaction [tx conn]
       (let [sqlmap {:insert-into :approval_log,
-                    :values [{:status 0
-                              :data (:data entity)
-                              :approve_id id
-                              :approve_user_id (:id uinfo)
-                              :reason reason}]}]
+                    :values      [{:status          0
+                                   :data            (:data entity)
+                                   :approve_id      id
+                                   :approve_user_id (:id uinfo)
+                                   :reason          reason}]}]
         (jdbc/execute-one! tx (hsql/format sqlmap))
 
         (sql/update! tx :approval {:status -1} {:id id})))
 
     {:code 0
-     :msg ""}))
+     :msg  ""}))

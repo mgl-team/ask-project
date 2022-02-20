@@ -21,10 +21,10 @@
 
     (let [data
           (-> entity
-            (select-keys [:username :email :mobile])
-            (assoc :password (if (:encrypted_password entity) true false)))]
+              (select-keys [:username :email :mobile])
+              (assoc :password (if (:encrypted_password entity) true false)))]
       {:code 0
-       :msg "success"
+       :msg  "success"
        :data data})))
 
 
@@ -35,9 +35,10 @@
     (check-service/check-must-exist entity "user does not exist!"))
 
     ;; set username
-  (let [sqlmap {:update :users, :set {:username   (:username params)
-                                      :updated_at [:raw "now()"]}
-                :where [:= :id (:id uinfo)]}
+  (let [sqlmap {:update :users
+                :set    {:username   (:username params)
+                         :updated_at [:raw "now()"]}
+                :where  [:= :id (:id uinfo)]}
         result (db/execute! (hsql/format sqlmap))]
     (log/warn "result = " result))
 
@@ -46,11 +47,12 @@
 
 (defn set-email [uinfo params]
   ;; check code TODO
-
+  
   ;; set username
-  (let [sqlmap {:update :users, :set {:email   (:email params)
-                                      :updated_at [:raw "now()"]}
-                :where [:= :id (:id uinfo)]}
+  (let [sqlmap {:update :users
+                :set    {:email      (:email params)
+                         :updated_at [:raw "now()"]}
+                :where  [:= :id (:id uinfo)]}
         result (db/execute! (hsql/format sqlmap))]
     (log/warn "result = " result))
 
@@ -62,9 +64,10 @@
   (sms-service/check-sms params)
 
   ;; set username
-  (let [sqlmap {:update :users, :set {:mobile   (:mobile params)
-                                      :updated_at [:raw "now()"]}
-                :where [:= :id (:id uinfo)]}
+  (let [sqlmap {:update :users
+                :set    {:mobile     (:mobile params)
+                         :updated_at [:raw "now()"]}
+                :where  [:= :id (:id uinfo)]}
         result (db/execute! (hsql/format sqlmap))]
     (log/warn "result = " result))
 
@@ -77,7 +80,8 @@
 
     {:code 0
      :msg  "success"
-     :data {:mobile (:mobile params) :exists (if (empty? entity) false true)
+     :data {:mobile   (:mobile params)
+            :exists   (if (empty? entity) false true)
             :password (if (:encrypted_password entity) true false)}}))
 
 (defn send-code [params headers addr]

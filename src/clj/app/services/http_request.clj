@@ -11,9 +11,9 @@
   (let [[http-fn params-key] (condp = method
                                :get [client/get :query-params]
                                :post [client/post :form-params])
-        http-response (http-fn url { :content-type :json
-                                     :accept :json
-                                     params-key params})]
+        http-response        (http-fn url { :content-type :json
+                                           :accept       :json
+                                           params-key    params})]
 
     (log/warn "http-request started ........")
 

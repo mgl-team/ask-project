@@ -11,20 +11,20 @@
 
 (defn favorite [uinfo pname pid]
   (jdbc/with-transaction [tx conn]
-    (let [map-value {:item_id pid
-                     :type pname
-                     :user_id (:id uinfo)}
+    (let [map-value                {:item_id pid
+                                    :type    pname
+                                    :user_id (:id uinfo)}
 
-          entity (sql/find-by-keys tx :favorite map-value
-                    { :columns [:id]
-                      :builder-fn rs/as-unqualified-lower-maps})
+          entity                   (sql/find-by-keys tx :favorite map-value
+                                                     { :columns    [:id]
+                                                      :builder-fn rs/as-unqualified-lower-maps})
 
           [sql-fn parent-count-fn] (if (empty? entity)
                                      [sql/insert! :+]
                                      [sql/delete! :-])
-          sqlmap {:update (keyword pname)
-                  :set {:favorite_count  [parent-count-fn :favorite_count 1]}
-                  :where [:= :id pid]}]
+          sqlmap                   {:update (keyword pname)
+                                    :set    {:favorite_count [parent-count-fn :favorite_count 1]}
+                                    :where  [:= :id pid]}]
 
 
       (sql-fn tx :favorite map-value)
@@ -32,4 +32,4 @@
       (jdbc/execute-one! tx (hsql/format sqlmap))))
 
   {:code 0
-   :msg "success"})
+   :msg  "success"})

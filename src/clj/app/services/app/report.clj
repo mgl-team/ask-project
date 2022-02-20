@@ -6,17 +6,17 @@
 
 (defn report [uinfo pname pid params]
   (let [map-value {:item_id pid
-                   :type pname
+                   :type    pname
                    :user_id (:id uinfo)}
 
-        entity (db/find-by-keys :report map-value
-                  { :columns [:id]})]
+        entity    (db/find-by-keys :report map-value
+                                   { :columns [:id]})]
 
 
     (if-not (empty? entity)
-       (exception/ex-throw "already reported"))
+      (exception/ex-throw "already reported"))
 
     (db/insert! :report (merge params map-value)))
 
   {:code 0
-   :msg "success"})
+   :msg  "success"})

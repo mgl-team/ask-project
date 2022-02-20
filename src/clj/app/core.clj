@@ -1,13 +1,13 @@
 (ns app.core
   (:require
-    [app.handler :as handler]
-    [app.nrepl :as nrepl]
-    [luminus.http-server :as http]
-    [luminus-migrations.core :as migrations]
-    [app.config :refer [env]]
-    [clojure.tools.cli :refer [parse-opts]]
-    [clojure.tools.logging :as log]
-    [mount.core :as mount])
+   [app.handler :as handler]
+   [app.nrepl :as nrepl]
+   [luminus.http-server :as http]
+   [luminus-migrations.core :as migrations]
+   [app.config :refer [env]]
+   [clojure.tools.cli :refer [parse-opts]]
+   [clojure.tools.logging :as log]
+   [mount.core :as mount])
   (:gen-class))
 
 ;; log uncaught exceptions in threads
@@ -57,8 +57,8 @@
 
 (defn -main [& args]
   (-> args
-                            (parse-opts cli-options)
-                            (mount/start-with-args #'app.config/env))
+      (parse-opts cli-options)
+      (mount/start-with-args #'app.config/env))
   (cond
     (nil? (:database-url env))
     (do

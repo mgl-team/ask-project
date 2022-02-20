@@ -14,11 +14,11 @@
     (check-service/check-must-exist entity "user does not exist!")
 
     (let [sqlmap {:insert-into [:jwt_blacklist]
-                  :values [{:jti        (:jti token)
-                            :exp        (:exp token)
-                            :user_id    (:id entity)
-                            :created_at [:raw "now"]
-                            :updated_at [:raw "now"]}]}
+                  :values      [{:jti        (:jti token)
+                                 :exp        (:exp token)
+                                 :user_id    (:id entity)
+                                 :created_at [:raw "now"]
+                                 :updated_at [:raw "now"]}]}
           result (db/execute! (hsql/format sqlmap))]
       (log/warn "result = " result))
 
