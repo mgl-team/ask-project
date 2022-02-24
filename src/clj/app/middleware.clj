@@ -12,6 +12,7 @@
     [buddy.sign.jwt :refer [encrypt decrypt]]
     [buddy.core.nonce :refer [random-bytes]]
     [buddy.sign.util :refer [to-timestamp]]
+    [buddy.core.codecs :refer [hex->bytes]]
     [ring.logger :as logger]
     app.middleware.exception)
   (:import
@@ -27,8 +28,10 @@
   (restrict handler {:handler authenticated?
                      :on-error on-error}))
 
-(def secret (random-bytes 32))
-;; 31af673fa9cc365da7ec44f1575f7d0916ef71b08232716c9488a3da2ec889b6
+(def secret
+  ; (random-bytes 32)
+  (hex->bytes
+    "31af673fa9cc365da7ec44f1575f7d0916ef71b08232716c9488a3da2ec889b6"))
 ; buddy.core.codecs/bytes->hex
 
 (def token-backend
