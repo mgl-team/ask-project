@@ -1,3 +1,5 @@
+alter table answer add column status smallint DEFAULT '0';
+--;;
 create or replace view v_answer as
   select
     a.id,
