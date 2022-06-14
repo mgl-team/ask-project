@@ -21,6 +21,7 @@
     [app.routes.topic :as topic-route]
     [app.routes.user :as user-route]
     [app.routes.file :as file-route]
+    [app.routes.search :as search-route]
 
     [app.routes.common :as common-route]))
 
@@ -72,5 +73,6 @@
          topic-route/route
          user-route/route
          file-route/route
+         search-route/route
 
          common-route/route)))
