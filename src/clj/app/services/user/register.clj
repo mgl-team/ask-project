@@ -23,7 +23,7 @@
   ; (if (not= (:password user) (:password-confirmation user))
   ;   (throw (ex-info "check" {:type ::exception/check
   ;                            :msg  "password not match!"})))
-
+  
   ;; check mobile exist
   (let [entity (db/find-by-keys :users {:mobile (:mobile user)})]
     (check-service/check-must-not-exist entity "mobile already exists"))
@@ -33,31 +33,33 @@
   ;          (empty? (sql/find-by-keys :users {:username (:username user)})))
   ;   (throw (ex-info "check" {:type ::exception/check
   ;                            :msg  "user already exists!"}))))
-
+  
   ;; check code
-  (sms/check-sms {:phone (:mobile user) :code (:code user)}))
+  (sms/check-sms {:phone (:mobile user)
+                  :code  (:code user)}))
 
 (defn register [user headers addr]
   (check-before-register user)
   (jdbc/with-transaction [tx conn]
-    (let [{:keys [mobile]}                         user
+    (let [{:keys [mobile]} user
           ; password                                 (hashers/derive (:password user))
-          model                                    (-> user
-                                                     (select-keys [:mobile]))
+          model            (-> user
+                               (select-keys [:mobile]))
                                                       ; (assoc :encrypted_password password))
-          result                                   (sql/insert! tx :users model
-                                                     {:builder-fn rs/as-unqualified-lower-maps})]
+          result           (sql/insert! tx :users model
+                                        {:builder-fn rs/as-unqualified-lower-maps})]
 
       (if (nil? (:id result))
         (exception/ex-throw "user add error!"))
 
       ;; update statistics record
-      (let [sqlmap {:update :users, :set {:sign_in_count      [:+ :sign_in_count 1]
-                                          :current_sign_in_at [:raw "now()"]
-                                          :current_sign_in_ip addr
-                                          :updated_at         [:raw "now()"]
-                                          :failed_attempts    0}
-                    :where [:= :id (:id result)]}]
+      (let [sqlmap {:update :users
+                    :set    {:sign_in_count      [:+ :sign_in_count 1]
+                             :current_sign_in_at [:raw "now()"]
+                             :current_sign_in_ip addr
+                             :updated_at         [:raw "now()"]
+                             :failed_attempts    0}
+                    :where  [:= :id (:id result)]}]
         (jdbc/execute! tx (hsql/format sqlmap)))
 
       ;; create user_ex

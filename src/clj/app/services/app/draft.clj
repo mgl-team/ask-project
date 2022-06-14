@@ -9,14 +9,15 @@
 
 (defn create-entity [uinfo params]
   (jdbc/with-transaction [tx conn]
-    (let [{pid :item_id pname :type} params
-          map-value {:item_id pid
-                     :type pname
-                     :user_id (:id uinfo)}
+    (let [{pid   :item_id
+           pname :type} params
+          map-value                   {:item_id pid
+                                       :type    pname
+                                       :user_id (:id uinfo)}
 
-          sqlmap {:update :user_ex
-                  :set {:draft_count  [:+ :draft_count 1]}
-                  :where [:= :id (:id uinfo)]}]
+          sqlmap                      {:update :user_ex
+                                       :set    {:draft_count [:+ :draft_count 1]}
+                                       :where  [:= :id (:id uinfo)]}]
 
 
       (sql/insert! tx :draft (merge params map-value))
@@ -24,7 +25,7 @@
       (jdbc/execute-one! tx (hsql/format sqlmap))))
 
   {:code 0
-   :msg "success"})
+   :msg  "success"})
 
 (defn edit-entity [uinfo id params]
   (let [entity (db/get-by-id :draft id)]
@@ -35,18 +36,18 @@
   (db/update! :draft params {:id id})
 
   {:code 0
-   :msg "success"})
+   :msg  "success"})
 
 (defn get-entities [uinfo params]
   {:code 0
-   :msg "success"
+   :msg  "success"
    :data (db/find-by-keys :draft (if empty? :all params) 
-           {:order-by [[:id :desc]]})})
+                          {:order-by [[:id :desc]]})})
 
 (defn remove-entity [uinfo id]
   (jdbc/with-transaction [tx conn]
     (let [entity (sql/get-by-id tx :draft id
-                   {:builder-fn rs/as-unqualified-lower-maps})]
+                                {:builder-fn rs/as-unqualified-lower-maps})]
       (check-service/check-must-exist entity "must exists")
 
       (check-service/check-own-entity uinfo entity "must own entity")
@@ -54,9 +55,9 @@
       (sql/delete! tx :draft {:id id}))
 
     (let [sqlmap {:update :user_ex
-                  :set {:draft_count  [:- :draft_count 1]}
-                  :where [:= :id (:id uinfo)]}]
+                  :set    {:draft_count [:- :draft_count 1]}
+                  :where  [:= :id (:id uinfo)]}]
       (jdbc/execute-one! tx (hsql/format sqlmap))))
 
   {:code 0
-   :msg "success"})
+   :msg  "success"})

@@ -13,14 +13,18 @@
 (def route
   [["/users/register"
     {:swagger {:tags ["users"]}
-     :post {:summary "sign up."
-             :parameters {:body {:code string?
-                                 :mobile string?}}
-             :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
-                                                            , (ds/opt :token) any?}}}
-             :handler (fn [{{:keys [body]} :parameters headers :headers addr :remote-addr}]
-                        {:status 200 :body
-                         (register-service/register body headers addr)})}}]
+     :post    {:summary    "sign up."
+               :parameters {:body {:code   string?
+                                   :mobile string?}}
+               :responses  {200 {:body {:code            int?
+                                        :msg             string?
+                                        (ds/opt :errors) any?
+                                        (ds/opt :token)  any?}}}
+               :handler    (fn [{{:keys [body]} :parameters
+                                 headers        :headers
+                                 addr           :remote-addr}]
+                             {:status 200
+                              :body   (register-service/register body headers addr)})}}]
    ["/users/login"
     {:swagger {:tags ["users"]}
      :post {:summary "sign in."

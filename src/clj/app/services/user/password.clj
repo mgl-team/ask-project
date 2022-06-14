@@ -18,9 +18,9 @@
 (defn change-password [token params]
   ;; check confirmation
   (check-service/check-password-confirmation
-    (:password params)
-    (:password-confirmation params)
-    "confirmation not match!")
+   (:password params)
+   (:password-confirmation params)
+   "confirmation not match!")
 
   (let [entity (db/get-by-id conn :users (:id token))]
 
@@ -29,14 +29,15 @@
 
     ;; check current password
     (check-service/check-current-password
-      (:current-password params)
-      entity
-      "password not match!"))
+     (:current-password params)
+     entity
+     "password not match!"))
 
   ;; update db
-  (let [sqlmap {:update :users, :set {:password   (hashers/derive (:password params))
-                                      :updated_at [:raw "now()"]}
-                :where [:= :id (:id token)]}
+  (let [sqlmap {:update :users
+                :set    {:password   (hashers/derive (:password params))
+                         :updated_at [:raw "now()"]}
+                :where  [:= :id (:id token)]}
         result (db/execute! (hsql/format sqlmap))]
     (log/warn "result = " result))
 
@@ -49,14 +50,15 @@
     (check-service/check-must-exist entity "user does not exist!")
 
     (check-service/check-password-confirmation
-      (:password params)
-      (:password-confirmation params)
-      "confirmation not match!"))
+     (:password params)
+     (:password-confirmation params)
+     "confirmation not match!"))
 
   ;; update db
-  (let [sqlmap {:update :users, :set {:password   (hashers/derive (:password params))
-                                      :updated_at [:raw "now()"]}
-                :where [:= :id (:id uinfo)]}
+  (let [sqlmap {:update :users
+                :set    {:password   (hashers/derive (:password params))
+                         :updated_at [:raw "now()"]}
+                :where  [:= :id (:id uinfo)]}
         result (db/execute! (hsql/format sqlmap))]
     (log/warn "result = " result)
 

@@ -24,7 +24,7 @@
     (if is-avatar
       (db/update! :user_ex {:avatar_file file-url} {:id (:id uinfo)})
       (let [params {:filename (:filename file)
-                    :url file-url}
+                    :url      file-url}
             result (db/insert! :attach_file params)]
         (ok {:success true
              :msg     "success"

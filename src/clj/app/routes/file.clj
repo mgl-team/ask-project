@@ -14,33 +14,33 @@
            :parameters {:path {:filename string?
                                :year     string?
                                :month    string?
-                               :id      string?}}
+                               :id       string?}}
            :handler    (fn [{{{filename :filename
                                year     :year
                                month    :month
-                               id      :id} :path} :parameters
-                             token                   :identity}]
+                               id       :id} :path} :parameters
+                             token                                                          :identity}]
                          (file-response (str "/img/" id "/" year "/" month "/" filename) {:root "public"}))}}]
    ["/file/upload"
     {:post {:summary    "put a file"
             :swagger    {:tags ["files"]}
-            :parameters {:multipart {:file         multipart/temp-file-part}}
+            :parameters {:multipart {:file multipart/temp-file-part}}
             :responses  {200 {:body {:success       boolean?
                                      :msg           string?
                                      (ds/opt :data) any?}}}
             :handler    (fn [{{{:keys [file accession_id test_type_id]} :multipart} :parameters
-                              token :identity}]
+                              token                                                 :identity}]
                           (let [params {}]
                             (file-service/add-file file false token)))}}]
    ["/file/upload-avatar"
     {:post {:summary    "put a avatar"
             :middleware [[middleware/wrap-restricted]]
             :swagger    {:tags ["files"]}
-            :parameters {:multipart {:file         multipart/temp-file-part}}
+            :parameters {:multipart {:file multipart/temp-file-part}}
             :responses  {200 {:body {:success       boolean?
                                      :msg           string?
                                      (ds/opt :data) any?}}}
             :handler    (fn [{{{:keys [file accession_id test_type_id]} :multipart} :parameters
-                              token :identity}]
+                              token                                                 :identity}]
                           (let [params {}]
                             (file-service/add-file file true token)))}}]])
