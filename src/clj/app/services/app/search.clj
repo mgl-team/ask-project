@@ -40,8 +40,9 @@
       {:code 0
        :msg "success"
        :data data})
-    (let [data (http/get
-                 (get-url (get-in env [:search-engine :question :you-type-url]))
+    (let [search (:search params)
+          data (http/get
+                 (get-url (get-in env [:search-engine :question :url]))
                  ((get-in env [:search-engine :question :params]) params))]
       {:code 0
        :msg "success"
@@ -50,33 +51,36 @@
 
 (defn search-questions-you-type [uinfo params]
   (log/info " search-as-you-type = " params)
-  (let [data (if (is-local-engine)
+  (let [search (:search params)
+        data (if (is-local-engine)
                []
                (http/get
-                 (get-url (get-in env [:search-engine :question :you-type-url]))
-                 ((get-in env [:search-engine :question :you-type-params]) params)))]
+                 (get-url (get-in env [:search-engine :question :url]))
+                 ((get-in env [:search-engine :question :you-type-params]) search)))]
     {:code 0
      :msg "success"
      :data data}))
 
 (defn search-articles [uinfo params]
   (log/info " search-content = " params)
-  (let [data (if (is-local-engine)
+  (let [search (:search params)
+        data (if (is-local-engine)
                []
                (http/get
-                 (get-url (get-in env [:search-engine :question :you-type-url]))
-                 ((get-in env [:search-engine :article :params]) params)))]
+                 (get-url (get-in env [:search-engine :article :url]))
+                 ((get-in env [:search-engine :article :params]) search)))]
     {:code 0
      :msg "success"
      :data data}))
 
-(defn search-artiles-you-type [uinfo params]
+(defn search-articles-you-type [uinfo params]
   (log/info " search-as-you-type = " params)
-  (let [data (if (is-local-engine)
+  (let [search (:search params)
+        data (if (is-local-engine)
                []
                (http/get
-                 (get-url (get-in env [:search-engine :question :you-type-url]))
-                 ((get-in env [:search-engine :article :you-type-params]) params)))]
+                 (get-url (get-in env [:search-engine :article :url]))
+                 ((get-in env [:search-engine :article :you-type-params]) search)))]
     {:code 0
      :msg "success"
      :data data}))
