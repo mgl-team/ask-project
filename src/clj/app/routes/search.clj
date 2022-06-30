@@ -10,7 +10,7 @@
     {:swagger {:tags ["searchs"]}
      ; :middleware [[middleware/wrap-restricted]]
      :get {:summary "get list."
-           :parameters {:query {:content string?}}
+           :parameters {:query {:search string?}}
            :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
                                                           , (ds/opt :data) any?}}}
            :handler (fn [{{params :query} :parameters token :identity}]

@@ -13,6 +13,7 @@
    [app.services.check :as check-service]
    [app.services.jdbc-pager :as pager]
    [app.services.http-request :as http]
+   [clj-http.client :as client]
    [app.middleware.exception :as exception]))
 
 (defn is-local-engine [] (= "local" (get-in env [:search-engine :type])))
@@ -41,9 +42,23 @@
        :msg "success"
        :data data})
     (let [search (:search params)
-          data (http/get
-                 (get-url (get-in env [:search-engine :question :url]))
-                 ((get-in env [:search-engine :question :params]) params))]
+          params (assoc-in
+                   (get-in env [:search-engine :question :params])
+                   [:query :multi_match :query]
+                   search)
+          ; data (client/post
+          ;        (get-url (get-in env [:search-engine :question :url]))
+          ;        {:form-params {};params
+          ;         :content-type :json})]
+          response (http/post
+                     (get-url (get-in env [:search-engine :question :url]))
+                     params)
+          data {:total (get-in response [:hits :total :value])
+                :result (map (fn [i] (merge {:id (:_id i)} (:_source i)
+                                            (if (get i :highlight)
+                                              {:highlight (get i :highlight)})))
+                          (get-in response [:hits :hits]))}]
+      (log/warn "data = " data)
       {:code 0
        :msg "success"
        :data data})))
