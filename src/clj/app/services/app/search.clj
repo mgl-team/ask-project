@@ -71,6 +71,25 @@
      :msg "success"
      :data data}))
 
+(defn search-question-answers [uinfo params]
+  (log/info " search-question-answer = " params)
+  (let [search (:search params)
+        params        (assoc-in
+                        (get-in env [:search-engine :question-answer :params])
+                        [:query :multi_match :query]
+                        search)
+        response      (http/post
+                        (get-url (get-in env [:search-engine :question-answer :url]))
+                        params)
+        data          {:total   (get-in response [:hits :total :value])
+                       :result  (map (fn [i] (merge {:id (:_id i)} (:_source i)
+                                                    (if (:highlight i)
+                                                      (:highlight i))))
+                                  (get-in response [:hits :hits]))}]
+    {:code 0
+     :msg "success"
+     :data data}))
+
 (defn search-articles [uinfo params]
   (log/info " search-content = " params)
   (let [search (:search params)

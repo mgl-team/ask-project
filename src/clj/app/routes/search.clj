@@ -24,6 +24,15 @@
                                                           , (ds/opt :data) any?}}}
            :handler (fn [{{params :query} :parameters token :identity}]
                       (ok (service/search-questions-you-type token params)))}}]
+   ["/search/question-answers"
+    {:swagger {:tags ["searchs"]}
+     ; :middleware [[middleware/wrap-restricted]]
+     :get {:summary "get list."
+           :parameters {:query {:search string?}}
+           :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
+                                                          , (ds/opt :data) any?}}}
+           :handler (fn [{{params :query} :parameters token :identity}]
+                      (ok (service/search-question-answers token params)))}}]
    ["/search/articles"
     {:swagger {:tags ["searchs"]}
      ; :middleware [[middleware/wrap-restricted]]
