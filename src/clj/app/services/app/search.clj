@@ -62,11 +62,18 @@
 (defn search-questions-you-type [uinfo params]
   (log/info " search-as-you-type = " params)
   (let [search (:search params)
-        data (if (is-local-engine)
-               []
-               (http/get
-                 (get-url (get-in env [:search-engine :question :url]))
-                 ((get-in env [:search-engine :question :you-type-params]) search)))]
+        params        (assoc-in
+                       (get-in env [:search-engine :question :search-as-params])
+                       [:query :multi_match :query]
+                       search)
+        response     (http/post
+                      (get-url (get-in env [:search-engine :question :url]))
+                      params)
+        data          {:total   (get-in response [:hits :total :value])
+                       :result  (map (fn [i] (merge {:id (:_id i)} (:_source i)
+                                                    (if (:highlight i)
+                                                      (:highlight i))))
+                                     (get-in response [:hits :hits]))}]
     {:code 0
      :msg "success"
      :data data}))
@@ -113,3 +120,9 @@
     {:code 0
      :msg "success"
      :data data}))
+
+(comment
+  (search-questions {} {:search "ᠰᠣᠨᠢᠨ"})
+  (search-question-answers {} {:search "hell"})
+  (search-questions-you-type {} {:search "ᠶᠠ"})
+  )

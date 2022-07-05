@@ -11,7 +11,7 @@
   (let [[http-fn params-key] (condp = method
                                :get [client/get :query-params]
                                :post [client/post :form-params])
-        http-response        (http-fn url { :content-type :json
+        http-response        (http-fn url {:content-type :json
                                            :accept       :json
                                            params-key    params})]
 
@@ -21,7 +21,7 @@
     (check-service/check-http-status http-response)
 
     (let [json-message (cheshire/parse-string (:body http-response) true)]
-
+      
       ;; check json response status
       (check-service/check-http-response json-message)
 
