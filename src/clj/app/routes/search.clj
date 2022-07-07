@@ -18,12 +18,12 @@
    ["/search/questions-you-type"
     {:swagger {:tags ["searchs"]}
      ; :middleware [[middleware/wrap-restricted]]
-     :get {:summary "get list."
-           :parameters {:query {:content string?}}
-           :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
-                                                          , (ds/opt :data) any?}}}
-           :handler (fn [{{params :query} :parameters token :identity}]
-                      (ok (service/search-questions-you-type token params)))}}]
+     :post {:summary "get list."
+            :parameters {:body {:search string?}}
+            :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
+                                                           , (ds/opt :data) any?}}}
+            :handler (fn [{{params :body} :parameters token :identity}]
+                       (ok (service/search-questions-you-type token params)))}}]
    ["/search/question-answers"
     {:swagger {:tags ["searchs"]}
      ; :middleware [[middleware/wrap-restricted]]
@@ -36,18 +36,18 @@
    ["/search/articles"
     {:swagger {:tags ["searchs"]}
      ; :middleware [[middleware/wrap-restricted]]
-     :get {:summary "get list."
-           :parameters {:query {:content string?}}
-           :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
-                                                          , (ds/opt :data) any?}}}
-           :handler (fn [{{params :query} :parameters token :identity}]
-                      (ok (service/search-articles token params)))}}]
+     :post {:summary "get list."
+            :parameters {:body {:search string?}}
+            :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
+                                                           , (ds/opt :data) any?}}}
+            :handler (fn [{{params :body} :parameters token :identity}]
+                       (ok (service/search-articles token params)))}}]
    ["/search/articles-you-type"
     {:swagger {:tags ["searchs"]}
      ; :middleware [[middleware/wrap-restricted]]
-     :get {:summary "get list."
-           :parameters {:query {:content string?}}
-           :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
-                                                          , (ds/opt :data) any?}}}
-           :handler (fn [{{params :query} :parameters token :identity}]
-                      (ok (service/search-articles-you-type token params)))}}]])
+     :post {:summary "get list."
+            :parameters {:body {:search string?}}
+            :responses {200 {:body {:code int? :msg string?, (ds/opt :errors) any?
+                                                           , (ds/opt :data) any?}}}
+            :handler (fn [{{params :body} :parameters token :identity}]
+                       (ok (service/search-articles-you-type token params)))}}]])

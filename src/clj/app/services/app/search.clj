@@ -124,5 +124,4 @@
 (comment
   (search-questions {} {:search "ᠰᠣᠨᠢᠨ"})
   (search-question-answers {} {:search "hell"})
-  (search-questions-you-type {} {:search "ᠶᠠ"})
-  )
+  (search-questions-you-type {} {:search "ᠶᠠ"}))
