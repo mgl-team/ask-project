@@ -13,6 +13,8 @@
    [app.services.check :as check-service]
    [app.middleware.exception :as exception]))
 
+(declare fix-content)
+
 (defn get-models [uinfo pid]
   (log/info " pid = " pid)
   (if (:id uinfo)
@@ -36,16 +38,24 @@
                                               [:= :d.user_id (:id uinfo)]]]
                   :where [:= :question_id pid]
                   :order-by [[:id :desc]]}
-          data (db/execute! (hsql/format sqlmap))]
+          data (->> (db/execute! (hsql/format sqlmap))
+                    (fix-content))]
       {:code 0
        :msg "success"
        :data data})
 
-    (let [data (db/find-by-keys :v_answer  {:question_id pid}
-                {:order-by [[:id :desc]]})]
+    (let [data (->> (db/find-by-keys :v_answer  {:question_id pid}
+                     {:order-by [[:id :desc]]})
+                    (fix-content))]
       {:code 0
        :msg "success"
        :data data})))
+
+(defn get-model [uinfo id]
+  (let [data (db/get-by-id :answer id {:columns [:content :id]})]
+    {:code 0
+     :msg "success"
+     :data data}))
 
 (defn create-model [uinfo pid params]
   (log/info "uinfo = " uinfo " pid = " pid)
@@ -116,3 +126,15 @@
         (jdbc/execute-one! tx (hsql/format sqlmap)))))
   {:code 0
    :msg  "success"})
+
+(defn- fix-content [data]
+  ;; delete last word, because of last word may trancated
+  ;; the database return size is 160
+  (->> data
+      (map
+        (fn [x]
+          (if (< (count (:content x)) 160)
+            x
+            (let [content (:content x)
+                  last-index (clojure.string/last-index-of content " ")]
+              (assoc x :content (subs content 0 last-index))))))))

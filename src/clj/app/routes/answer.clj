@@ -33,8 +33,8 @@
                              (ok (service/get-models token id)))}}]
    ["/questions/:pid/answers/:id"
     {:swagger    {:tags ["answers"]}
-     :middleware [[middleware/wrap-restricted]]
      :put        {:summary    "edit."
+                  :middleware [[middleware/wrap-restricted]]
                   :parameters {:path {:pid integer?
                                       :id  integer?}
                                :body {:content string?}}
@@ -47,8 +47,18 @@
                                       id  :id} :path} :parameters
                                     token                                  :identity}]
                                 (ok (service/edit-model token pid id body)))}
+     :get     {:summary    "get one."
+               :parameters {:path {:pid integer? :id integer?}}
+               :responses  {200 {:body {:code            int?
+                                        :msg             string?
+                                        (ds/opt :errors) any?
+                                        (ds/opt :data)   any?}}}
+               :handler    (fn [{{{pid :pid id :id} :path} :parameters
+                                 token            :identity}]
+                             (ok (service/get-model token id)))}
 
      :delete     {:summary    "remove."
+                  :middleware [[middleware/wrap-restricted]]
                   :parameters {:path {:id integer?}}
                   :responses  {200 {:body {:code            int?
                                            :msg             string?

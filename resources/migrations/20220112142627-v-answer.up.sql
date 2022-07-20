@@ -4,7 +4,7 @@ create or replace view v_answer as
   select
     a.id,
     a.question_id,
-    a.content,
+    substring(a.content, 0, 160) as content,
     a.against_count,
     a.agree_count,
     a.comment_count,

@@ -122,9 +122,15 @@
   (sql/update! conn t w s
     {:builder-fn rs/as-unqualified-lower-maps}))
 
-(defn get-by-id [t id]
-  (sql/get-by-id conn t id
-    {:builder-fn rs/as-unqualified-lower-maps}))
+(defn get-by-id
+  ([t id]
+   (sql/get-by-id conn t id
+     {:builder-fn rs/as-unqualified-lower-maps}))
+  ([t id ex]
+   (sql/get-by-id conn t id
+     (merge
+       {:builder-fn rs/as-unqualified-lower-maps}
+       ex))))
 
 (defn find-by-keys
   ([t w]
