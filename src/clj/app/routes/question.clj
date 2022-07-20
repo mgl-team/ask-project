@@ -50,7 +50,7 @@
 
      :delete  {:summary    "remove."
                :parameters {:path {:id integer?}}
-               :responses  {200 {:body {:success       boolean?
+               :responses  {200 {:body {:code          int?
                                         :msg           string?
                                         (ds/opt :data) any?}}}
                :handler    (fn [{{body     :body

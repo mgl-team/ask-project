@@ -64,8 +64,11 @@
   (log/info "params = " params)
   (jdbc/with-transaction [tx conn]
     (let [sqlmap          {:insert-into :question,
-                           :values      [{:unverified_modify_count 1
-                                          :user_id                 (:id uinfo)}]}
+                           :values      [(merge
+                                          params
+                                          {:unverified_modify_count 1
+                                           :unverified_modify       ""
+                                           :user_id                 (:id uinfo)})]}
           result          (jdbc/execute-one! tx (hsql/format sqlmap)
                                              {:return-keys true
                                               :builder-fn  rs/as-unqualified-lower-maps})
