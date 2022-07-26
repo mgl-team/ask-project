@@ -16,6 +16,7 @@
 (declare fix-content)
 
 (defn get-models [uinfo pid]
+  (log/info " uinfo = " uinfo)
   (log/info " pid = " pid)
   (if (:id uinfo)
     (let [sqlmap {:select [:a.*

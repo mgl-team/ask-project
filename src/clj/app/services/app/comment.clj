@@ -25,12 +25,16 @@
   (log/info "uinfo = " uinfo)
   (if (:id uinfo)
     (let [sqlmap {:select    [:a.*
-                              [[:case [:not= :b.id nil] 1 :else 0] "user_like"]]
+                              [[:case [:not= :b.id nil] 1 :else 0] "user_like"]
+                              [[:case [:not= :c.id nil] 1 :else 0] "user_comment"]]
                   :from      [[:v_comment :a]]
                   :left-join [[:thanks :b] [:and
                                             [:= :a.id :b.item_id]
                                             [:= :b.type "comment"]
-                                            [:= :b.user_id (:id uinfo)]]]
+                                            [:= :b.user_id (:id uinfo)]]
+                              [:user_ex :c] [:and
+                                             [:= :a.user_id :c.id]
+                                             [:= :c.id (:id uinfo)]]]
                   :where     [:and [:= :a.item_id pid]
                               [:= :a.type pname]]
                   :order-by  [[:id :desc]]}
