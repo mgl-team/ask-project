@@ -26,16 +26,12 @@
           (db/execute!
            (hsql/format
             {:select    [:a.*
-                         [[:case [:not= :b.id nil] 1 :else 0] "user_focus"]
-                         [[:case [:not= :c.id nil] 1 :else 0] "user_question"]]
+                         [[:case [:not= :b.id nil] 1 :else 0] "user_focus"]]
              :from      [[:v_question :a]]
              :left-join [[:focus :b] [:and
                                       [:= :a.id :b.item_id]
                                       [:= :b.type "question"]
-                                      [:= :b.user_id (:id uinfo)]]
-                         [:answer :c] [:and
-                                       [:= :c.question_id :a.id]
-                                       [:= :c.user_id (:id uinfo)]]]
+                                      [:= :b.user_id (:id uinfo)]]]
              :order-by  [[:a.id :desc]]
              :offset    (* (dec page) perpage)
              :fetch     perpage}))
