@@ -85,7 +85,7 @@
           (ok {:code 0
                :msg  "success"}))
         (bad-request {:code 1
-                      :msg "has already"})))))
+                      :msg "errors/already-has-answer"})))))
 
 (defn edit-model [uinfo pid id params]
   (log/info "uinfo = " uinfo)
