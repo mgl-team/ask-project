@@ -17,10 +17,12 @@
                :responses  {200 {:body {:code            int?
                                         :msg             string?
                                         (ds/opt :errors) any?
-                                        (ds/opt :data)   any?}}}
+                                        (ds/opt :data)   any?}}
+                            400 {:body {:code            int?
+                                        :msg             string?}}}
                :handler    (fn [{{body :body} :parameters
                                  token        :identity}]
-                             (ok (service/create-model token body)))}
+                             (service/create-model token body))}
      :get     {:summary    "get list."
                :parameters {:query {(ds/opt :page)    int?
                                     (ds/opt :perpage) int?}}

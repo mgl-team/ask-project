@@ -11,7 +11,8 @@
    [app.db.core :as db :refer [conn]]
    [app.config :refer [env]]
    [app.services.check :as check-service]
-   [app.middleware.exception :as exception]))
+   [app.middleware.exception :as exception]
+   [ring.util.http-response :refer [ok bad-request]]))
 
 (declare fix-content)
 
@@ -62,23 +63,29 @@
   (log/info "uinfo = " uinfo " pid = " pid)
   (log/info "params = " params)
   (jdbc/with-transaction [tx conn]
-    (sql/insert! tx :answer
-                 (assoc params :question_id pid
-                        :user_id (:id uinfo)))
+    (let [user-answer (sql/find-by-keys tx :answer {:user_id      (:id uinfo)
+                                                    :question_id  pid})]
+      (if (empty? user-answer)
+        (do
+          (sql/insert! tx :answer
+                       (assoc params :question_id pid
+                              :user_id (:id uinfo)))
 
-    (let [entity      (sql/get-by-id tx :question pid
-                                     {:builder-fn rs/as-unqualified-lower-maps})
-          user-answer (sql/find-by-keys tx :answer {:user_id     (:id uinfo)
-                                                    :question_id pid})]
-      (sql/update! tx :question
-                   (merge
-                    { :updated_at   (time/local-date-time)
-                     :answer_count (inc (:answer_count entity))}
-                    (if (empty? user-answer)
-                      { :answer_user (inc (:answer_user entity))}))
-                   {:id pid})))
-  {:code 0
-   :msg  "success"})
+          (let [entity      (sql/get-by-id tx :question pid
+                                           {:builder-fn rs/as-unqualified-lower-maps})
+                user-answer (sql/find-by-keys tx :answer {:user_id     (:id uinfo)
+                                                          :question_id pid})]
+            (sql/update! tx :question
+                         (merge
+                          { :updated_at   (time/local-date-time)
+                           :answer_count (inc (:answer_count entity))}
+                          (if (empty? user-answer)
+                            { :answer_user (inc (:answer_user entity))}))
+                         {:id pid}))
+          (ok {:code 0
+               :msg  "success"}))
+        (bad-request {:code 1
+                      :msg "has already"})))))
 
 (defn edit-model [uinfo pid id params]
   (log/info "uinfo = " uinfo)
